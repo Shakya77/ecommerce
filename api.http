@@ -1,13 +1,21 @@
 @host = http://localhost:3000
 
 ### Register User
-
 POST {{host}}/auth/register
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john@example.com",
+  "name": "user",
+  "email": "user@gmail.com",
   "password": "password",
   "role": "customer"
+}
+
+### Login User
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@gmail.com",
+  "password": "password"
 }

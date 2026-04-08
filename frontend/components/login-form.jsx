@@ -20,8 +20,16 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import api from "@/lib/api";
+import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Loader from "./Loader";
 
 export function LoginForm({ className, ...props }) {
+  const { login, user } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -37,11 +45,23 @@ export function LoginForm({ className, ...props }) {
     console.log("Login form submitted", data);
     try {
       const response = await api.post("/auth/login", data);
-      console.log("Login response", response);
+      login(response.data.access_token);
+      router.push("/dashboard");
     } catch (error) {
-      console.error("Login failed", error);
+      console.log(error);
+      toast.error(error.response?.data?.message);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  if (loading) return <Loader />;
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

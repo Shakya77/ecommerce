@@ -3,6 +3,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,10 @@ export default function RootLayout({ children }) {
     >
       <Suspense fallback={<Loading />}>
         <AuthProvider>
-          <body className="min-h-full flex flex-col">{children}</body>
+          <body>
+            {children}
+            <Toaster closeButton position="top-center" />
+          </body>
         </AuthProvider>
       </Suspense>
     </html>
