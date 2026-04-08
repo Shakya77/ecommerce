@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
+import { User } from 'src/users/entities/user.entity';
 
 export const databaseProviders = [
   {
@@ -13,7 +14,7 @@ export const databaseProviders = [
         database: 'ecommerce',
       });
 
-      sequelize.addModels([]);
+      sequelize.addModels([User]);
 
       await sequelize.sync();
       return sequelize;

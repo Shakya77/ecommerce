@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import api from "@/lib/api";
 
 export function LoginForm({ className, ...props }) {
   const {
@@ -32,9 +33,15 @@ export function LoginForm({ className, ...props }) {
     },
   });
 
-  function onSubmit(data) {
+  const onSubmit = async (data) => {
     console.log("Login form submitted", data);
-  }
+    try {
+      const response = await api.post("/auth/login", data);
+      console.log("Login response", response);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

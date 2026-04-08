@@ -15,7 +15,7 @@ import { UserRole } from './decorators/user-role.decorator';
 import { AllowedRoles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from 'src/users/entities/user.entity';
-import { LoggingInterceptor } from 'common/interceptors/logging.interceptor';
+import { LoggingInterceptor } from 'interceptors/logging.interceptor';
 
 @Controller('auth')
 @UseInterceptors(LoggingInterceptor)

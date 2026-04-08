@@ -15,16 +15,4 @@ export class CreateUserDto {
 
   @IsBoolean()
   isActive: boolean;
-
-  @IsNumber()
-  rewardPoints: number;
-
-  @IsString()
-  licenseNumber: string;
-
-  @IsNumber()
-  userId: number;
-
-  @IsNumber()
-  ratePerHr: number;
 }

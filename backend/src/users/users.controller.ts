@@ -28,13 +28,6 @@ export class UsersController {
     return await this.usersService.getMe(req.user.id);
   }
 
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('staff')
-  async listStaff() {
-    return await this.usersService.listStaff();
-  }
-
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
@@ -55,37 +48,6 @@ export class UsersController {
 
   @AllowedRoles(Roles.ADMIN)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('staff')
-  async createStaff(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.createStaff(createUserDto);
-  }
-
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('staff/:id')
-  async getStaff(@Param('id') id: string) {
-    return await this.usersService.getStaff(+id);
-  }
-
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Patch('staff/:id')
-  async updateStaff(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return await   this.usersService.updateStaff(+id, updateUserDto);
-  }
-
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Delete('staff/:id')
-  async deleteStaff(@Param('id') id: string) {
-    return await this.usersService.deleteStaff(+id);
-  }
-
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   async findAll(
     @Request() req,
@@ -101,11 +63,6 @@ export class UsersController {
       userId,
     );
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
 
   @AllowedRoles(Roles.ADMIN)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
