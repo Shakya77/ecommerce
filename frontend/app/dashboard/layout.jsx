@@ -1,3 +1,5 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -13,8 +15,27 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Loading from "../loading";
 
 export default function layout({ children }) {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [isloading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+    setIsLoading(false);
+  }, [loading, user, router]);
+
+  if (isloading) return <Loading />;
+
   return (
     <SidebarProvider>
       <AppSidebar />

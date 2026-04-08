@@ -23,13 +23,6 @@ function decodeToken(token) {
   }
 }
 
-export function dashboardForRole(role, slug) {
-  if (role === "admin") return "/admin";
-  if (role === "staff") return "/staff";
-  if (role === "user") return `/client/dashboard`;
-  return "/";
-}
-
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
