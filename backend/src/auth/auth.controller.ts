@@ -1,0 +1,59 @@
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UserRole } from './decorators/user-role.decorator';
+import { AllowedRoles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from 'src/users/entities/user.entity';
+import { LoggingInterceptor } from 'common/interceptors/logging.interceptor';
+
+@Controller('auth')
+@UseInterceptors(LoggingInterceptor)
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  @Post('login')
+  async login(@Body() loginDto: CreateUserDto) {
+    return this.authService.login(loginDto);
+  }
+
+  @Post('/register')
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profile')
+  async getProfile(@Request() req, @UserRole() role: string) {
+    return {
+      ...req.user,
+      role,
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('role')
+  async getRole(@UserRole() role: string) {
+    return { role };
+  }
+
+  @AllowedRoles(Roles.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('admin-only')
+  async getAdminOnlyData(@Request() req) {
+    return { message: 'Admin action allowed', user: req.user };
+  }
+}

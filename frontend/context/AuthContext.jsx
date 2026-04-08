@@ -28,11 +28,22 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const short = (decoded) => {
+    return decoded?.name
+      ?.trim()
+      .split(" ")
+      .map((word) => word[0]?.toUpperCase())
+      .join("");
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const decoded = decodeToken(storedToken);
     setToken(storedToken);
-    setUser(decoded);
+    setUser({
+      ...decoded,
+      short: short(decoded),
+    });
     setLoading(false);
   }, []);
 
@@ -41,7 +52,11 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", newToken);
     const decoded = decodeToken(newToken);
     setToken(newToken);
-    setUser(decoded);
+
+    setUser({
+      ...decoded,
+      short: short(decoded),
+    });
     return decoded;
   };
 
