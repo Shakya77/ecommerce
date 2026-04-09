@@ -30,6 +30,11 @@ export class CategoryController {
     return await this.categoryService.create(createCategoryDto, req.user);
   }
 
+  @Get('/list')
+  async findList(@Request() req, @Query('query') query: string) {
+    return await this.categoryService.findList(query);
+  }
+
   @Get()
   async findAll(
     @Request() req,

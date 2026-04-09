@@ -4,6 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CATEGORIES_REPOSITORY } from '../../constants';
 import { Category } from './entities/category.entity';
 import slugify from 'slugify';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class CategoryService {
@@ -44,7 +45,7 @@ export class CategoryService {
       createdBy: user.id,
     } as any as Category);
 
-    return data;
+    return { message: 'Category created successfully', data };
   }
 
   async findAll(page: number, limit: number, user) {
@@ -120,5 +121,17 @@ export class CategoryService {
     );
 
     return 'Category status changed';
+  }
+
+  async findList(query = '') {
+    const data = await this.categoryRepository.findAll({
+      where: {
+        isActive: true,
+        name: { [Op.like]: `%${query}%` },
+      },
+      attributes: ['id', 'name'],
+    });
+
+    return data;
   }
 }
