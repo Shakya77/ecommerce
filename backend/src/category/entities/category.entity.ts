@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
 import {
   BelongsTo,
   BelongsToMany,
   Column,
+  DataType,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -19,26 +19,40 @@ import { User } from 'src/users/entities/user.entity';
 export class Category extends Model<Category> {
   @PrimaryKey
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     autoIncrement: true,
   })
   id: number;
 
   @Column({
-    type: DataTypes.STRING,
+    type: DataType.STRING,
     allowNull: false,
   })
   name: string;
 
   @Column({
-    type: DataTypes.STRING,
+    type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   slug: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  description: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  isActive: boolean;
+
   @ForeignKey(() => User)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   createdBy: number;
@@ -48,7 +62,7 @@ export class Category extends Model<Category> {
 
   @ForeignKey(() => User)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     allowNull: true,
   })
   updatedBy: number;
