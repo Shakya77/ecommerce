@@ -55,13 +55,13 @@ export function LoginForm({ className, ...props }) {
 
   useEffect(() => {
     if (user) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } else {
       setLoading(false);
     }
   }, [user]);
 
-  if (loading) return <Loader />;
+  if (loading) return <Loader fullScreen={false} className="min-h-52" />;
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

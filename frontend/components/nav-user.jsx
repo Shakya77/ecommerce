@@ -18,17 +18,30 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { ChevronsUpDownIcon, LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Loader from "./Loader";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
 
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   const handleLogout = () => {
     logout();
     router.push("/login");
   };
+
+  function shorten(str = "") {
+    if (!str.trim()) return "U";
+    return str
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+  }
+
+  if (!user) return <Loader />;
+
+  if (loading) return <Loader />;
 
   return (
     <SidebarMenu>
@@ -40,9 +53,8 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.short}
+                  {shorten(user.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -62,12 +74,14 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {shorten(user.name)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
-                  <span className="truncate text-xs">{user.role}</span>
+                  <span className="truncate text-xs">Role : {user.role}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
