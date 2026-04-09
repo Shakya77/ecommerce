@@ -39,7 +39,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "sticker",
+  "name": "stickeeer",
   "description": "category description"
 }
 
@@ -54,7 +54,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 ### Get One Category
-PUT {{host}}/category/2
+PUT {{host}}/category/3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -65,7 +65,7 @@ Authorization: Bearer {{token}}
 
 
 ### Get One Category
-DELETE  {{host}}/category/2
+DELETE  {{host}}/category/3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

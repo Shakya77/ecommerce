@@ -102,11 +102,13 @@ export class CategoryService {
   }
 
   async remove(id: number) {
+    await this.findOne(id);
+
     const data = await this.categoryRepository.destroy({
       where: { id },
     });
 
-    return data;
+    return { message: 'Category removed successfully' };
   }
 
   async changeStatus(id: number) {
@@ -117,6 +119,6 @@ export class CategoryService {
       },
     );
 
-    return data;
+    return 'Category status changed';
   }
 }

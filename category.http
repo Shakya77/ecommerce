@@ -1,0 +1,171 @@
+@host = http://localhost:3001
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlkIjoyLCJyb2xlIjoiYWRtaW4iLCJzbHVnIjoiYWRtaW4iLCJpYXQiOjE3NzU3MTg5ODF9.zCBdU4sYlOi0UUqpbglQmG_tfiwblZDm7txQ7ieFwXI
+
+###
+# Create random category set: mobile phones + accessories
+# Run each request one by one in VS Code REST Client
+
+### 1. Android Smartphones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Android Smartphones",
+  "description": "General Android phones from entry-level to flagship models."
+}
+
+### 2. Apple iPhones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Apple iPhones",
+  "description": "Latest and previous generation iPhone models."
+}
+
+### 3. Refurbished Phones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Refurbished Phones",
+  "description": "Certified pre-owned mobile phones with warranty support."
+}
+
+### 4. Gaming Phones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Gaming Phones",
+  "description": "Phones optimized for high frame rates and cooling performance."
+}
+
+### 5. Budget Smartphones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Budget Smartphones",
+  "description": "Affordable smartphones with balanced day-to-day features."
+}
+
+### 6. Premium Flagship Phones
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Premium Flagship Phones",
+  "description": "Top-tier phones with best-in-class camera and performance."
+}
+
+### 7. Phone Cases
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Phone Cases",
+  "description": "Protective silicone, leather, rugged, and clear phone cases."
+}
+
+### 8. Screen Protectors
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Screen Protectors",
+  "description": "Tempered glass and film protectors for mobile displays."
+}
+
+### 9. Fast Chargers
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Fast Chargers",
+  "description": "Wall adapters supporting quick and fast charging standards."
+}
+
+### 10. Power Banks
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Power Banks",
+  "description": "Portable battery packs for charging phones on the go."
+}
+
+### 11. USB-C Cables
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "USB-C Cables",
+  "description": "Durable charging and data-transfer cables for mobile devices."
+}
+
+### 12. Wireless Chargers
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Wireless Chargers",
+  "description": "Qi-compatible charging pads and stands for smartphones."
+}
+
+### 13. Earbuds and Headsets
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Earbuds and Headsets",
+  "description": "Wired and wireless audio accessories for calls and media."
+}
+
+### 14. Car Mounts
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Car Mounts",
+  "description": "Dashboard and vent mounts for safe phone navigation."
+}
+
+### 15. Mobile Camera Accessories
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Mobile Camera Accessories",
+  "description": "Tripods, stabilizers, and lens kits for smartphone photography."
+}
+
+### 16. Memory and Storage
+POST {{host}}/category
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Memory and Storage",
+  "description": "MicroSD cards and storage add-ons for mobile devices."
+}
+
+### Verify categories
+GET {{host}}/category?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer {{token}}
