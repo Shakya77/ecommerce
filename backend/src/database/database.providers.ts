@@ -1,4 +1,8 @@
 import { Sequelize } from 'sequelize-typescript';
+import { Category } from 'src/category/entities/category.entity';
+import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
+import { ProductHasCategory } from 'src/product/entities/product-has-category.entity';
+import { Product } from 'src/product/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
 
 export const databaseProviders = [
@@ -14,7 +18,13 @@ export const databaseProviders = [
         database: 'ecommerce',
       });
 
-      sequelize.addModels([User]);
+      sequelize.addModels([
+        User,
+        Category,
+        Product,
+        ProductHasMedia,
+        ProductHasCategory,
+      ]);
 
       await sequelize.sync();
       return sequelize;
