@@ -22,24 +22,21 @@ export default function ComboBoxPopupComponent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [options, setOptions] = useState([]);
 
-  // Fetch options from backend
   const fetchOptions = async (query = "") => {
     try {
       const response = await api.get("/category/list", {
         params: { search: query },
       });
-      setOptions(response.data); // assuming array of { id, name, code, value, label, continent }
+      setOptions(response.data);
     } catch (err) {
       console.error("Error fetching categories:", err);
     }
   };
 
-  // Initial fetch
   useEffect(() => {
     fetchOptions();
   }, []);
 
-  // Search debounce
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchOptions(searchTerm);
@@ -56,6 +53,7 @@ export default function ComboBoxPopupComponent() {
         // map ids back to full objects
         const selected = options.filter((o) => vals.includes(o.id));
         setSelectedCategories(selected);
+        fetchOptions("");
       }}
     >
       <ComboboxChips ref={anchor} className="w-full">

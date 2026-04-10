@@ -2,8 +2,6 @@
 
 import * as React from "react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -15,75 +13,49 @@ import {
 } from "@/components/ui/sidebar";
 import {
   TerminalSquareIcon,
-  BotIcon,
-  BookOpenIcon,
   Settings2Icon,
   Command,
+  LayoutDashboard,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLES } from "@/constants";
+import { NavSubMain } from "./nav-sub-main";
+import { NavMain } from "./nav-main";
 
 const data = {
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
+  ],
+  navSubMain: [
+    {
+      title: "Config",
       url: "#",
       icon: <TerminalSquareIcon />,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Category",
+          url: "/dashboard/category",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Product",
       url: "#",
-      icon: <BotIcon />,
+      icon: <TerminalSquareIcon />,
+      isActive: true,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "View All",
+          url: "/dashboard/product",
         },
         {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: <BookOpenIcon />,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Create",
+          url: "/dashboard/product/create",
         },
       ],
     },
@@ -134,6 +106,7 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        <NavSubMain items={data.navSubMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
