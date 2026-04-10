@@ -31,8 +31,8 @@ export class CategoryController {
   }
 
   @Get('/list')
-  async findList(@Request() req, @Query('query') query: string) {
-    return await this.categoryService.findList(query);
+  async findList(@Request() req, @Query('search') search: string) {
+    return await this.categoryService.findList(search);
   }
 
   @Get()

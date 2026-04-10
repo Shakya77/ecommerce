@@ -127,9 +127,10 @@ export class CategoryService {
     const data = await this.categoryRepository.findAll({
       where: {
         isActive: true,
-        name: { [Op.like]: `%${query}%` },
+        name: { [Op.iLike]: `%${query}%` },
       },
       attributes: ['id', 'name'],
+      limit: 5,
     });
 
     return data;
