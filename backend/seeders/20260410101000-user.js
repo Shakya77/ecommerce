@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    const now = new Date();
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash('password', saltRounds);
 
@@ -16,6 +17,8 @@ module.exports = {
         password: passwordHash,
         role: 'admin',
         isActive: true,
+        createdAt: now,
+        updatedAt: now,
       },
       {
         name: 'Demo User',
@@ -24,6 +27,18 @@ module.exports = {
         password: passwordHash,
         role: 'customer',
         isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        name: 'Demo User 2',
+        slug: 'demo-user-2',
+        email: 'user2@gmail.com',
+        password: passwordHash,
+        role: 'customer',
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
       },
     ];
 
