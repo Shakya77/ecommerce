@@ -8,6 +8,6 @@ import { DatabaseModule } from 'src/database/database.module';
   imports: [DatabaseModule],
   controllers: [CategoryController],
   providers: [CategoryService, ...CategoryProviders],
-  exports: [CategoryService],
+  exports: [CategoryService, ...CategoryProviders],
 })
 export class CategoryModule {}

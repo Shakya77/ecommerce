@@ -2,9 +2,9 @@
 
 import {
   Combobox,
+  ComboboxChip,
   ComboboxChips,
   ComboboxChipsInput,
-  ComboboxChip,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxItem,
@@ -12,24 +12,25 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from "@/components/ui/combobox";
-import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
+import { useEffect, useMemo, useState } from "react";
 
-export default function ComboBoxPopupComponent() {
+export default function ComboBoxPopupComponent({ value = [], onChange }) {
   const anchor = useComboboxAnchor();
-
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [options, setOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const selectedIds = useMemo(() => value.map((id) => Number(id)), [value]);
 
   const fetchOptions = async (query = "") => {
     try {
       const response = await api.get("/category/list", {
         params: { search: query },
       });
-      setOptions(response.data);
-    } catch (err) {
-      console.error("Error fetching categories:", err);
+      setOptions(response.data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -41,30 +42,58 @@ export default function ComboBoxPopupComponent() {
     const delay = setTimeout(() => {
       fetchOptions(searchTerm);
     }, 300);
+
     return () => clearTimeout(delay);
   }, [searchTerm]);
+
+  useEffect(() => {
+    setSelectedOptions((prev) => {
+      const fromOptions = options.filter((item) =>
+        selectedIds.includes(item.id),
+      );
+      const missing = prev.filter(
+        (item) =>
+          selectedIds.includes(item.id) &&
+          !fromOptions.some((i) => i.id === item.id),
+      );
+      return [...fromOptions, ...missing];
+    });
+  }, [options, selectedIds]);
 
   return (
     <Combobox
       multiple
       items={options}
-      value={selectedCategories.map((c) => c.id)} // store ids
+      value={selectedIds}
       onValueChange={(vals) => {
-        // map ids back to full objects
-        const selected = options.filter((o) => vals.includes(o.id));
-        setSelectedCategories(selected);
-        fetchOptions("");
+        const normalized = vals.map((id) => Number(id));
+        const selectedFromList = options.filter((item) =>
+          normalized.includes(item.id),
+        );
+        setSelectedOptions((prev) => {
+          const missing = prev.filter(
+            (item) =>
+              normalized.includes(item.id) &&
+              !selectedFromList.some((i) => i.id === item.id),
+          );
+          return [...selectedFromList, ...missing];
+        });
+
+        if (onChange) {
+          console.log(normalized);
+          onChange(normalized);
+        }
       }}
     >
       <ComboboxChips ref={anchor} className="w-full">
         <ComboboxValue>
           {() => (
             <>
-              {selectedCategories.map((cat) => (
+              {selectedOptions.map((cat) => (
                 <ComboboxChip key={cat.id}>{cat.name}</ComboboxChip>
               ))}
               <ComboboxChipsInput
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search categories..."
               />
             </>
