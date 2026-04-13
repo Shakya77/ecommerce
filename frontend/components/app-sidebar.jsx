@@ -41,6 +41,10 @@ const data = {
           title: "Category",
           url: "/dashboard/category",
         },
+        {
+          title: "Carousel",
+          url: "/dashboard/carousel",
+        },
       ],
     },
     {

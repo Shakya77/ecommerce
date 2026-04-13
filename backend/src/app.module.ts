@@ -10,6 +10,7 @@ import { PaymentModule } from './payment/payment.module';
 import { CartModule } from './cart/cart.module';
 import { ProductModule } from './product/product.module';
 import { UploadModule } from './upload/upload.module';
+import { CarouselModule } from './carousel/carousel.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UploadModule } from './upload/upload.module';
     PaymentModule,
     CartModule,
     UploadModule,
+    CarouselModule,
   ],
   controllers: [AppController],
   providers: [AppService],

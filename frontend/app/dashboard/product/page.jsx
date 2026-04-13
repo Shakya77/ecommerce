@@ -46,7 +46,7 @@ export default function Page() {
     {
       accessorKey: "price",
       header: "Price",
-      cell: ({ row }) => `$${Number(row.original.price).toLocaleString()}`,
+      cell: ({ row }) => `Rs.${Number(row.original.price).toLocaleString()}`,
     },
     {
       accessorKey: "categories",
@@ -57,12 +57,8 @@ export default function Page() {
           .join(", "),
     },
     {
-      accessorKey: "medias",
-      header: "Images",
-      cell: ({ row }) => (row.original.medias || []).length,
-    },
-    {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
