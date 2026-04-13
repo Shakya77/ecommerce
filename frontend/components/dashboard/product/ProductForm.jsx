@@ -2,21 +2,21 @@
 
 import ComboBoxPopupComponent from "@/components/dashboard/product/ComboBoxPopupComponent";
 import ProductImageManager from "@/components/dashboard/product/ProductImageManager";
+import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import JoditEditor from "jodit-react";
+import { ArrowLeftIcon } from "lucide-react";
 
 export default function ProductForm({ mode = "create", productId = null }) {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [categoryIds, setCategoryIds] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
@@ -24,6 +24,8 @@ export default function ProductForm({ mode = "create", productId = null }) {
   const [loading, setLoading] = useState(mode === "edit");
   const [submitting, setSubmitting] = useState(false);
   const [addMore, setAddMore] = useState(false);
+  const editor = useRef(null);
+  const [content, setContent] = useState("");
 
   useEffect(() => {
     if (mode !== "edit" || !productId) {
@@ -37,10 +39,10 @@ export default function ProductForm({ mode = "create", productId = null }) {
         const product = response.data;
 
         setName(product.name || "");
-        setDescription(product.description || "");
         setPrice(product.price?.toString() || "");
         setCategoryIds((product.categories || []).map((item) => item.id));
         setExistingImages(product.medias || []);
+        setContent(product.description || "");
       } catch (error) {
         toast.error(error.response?.data?.message || "Failed to load product");
       } finally {
@@ -63,7 +65,7 @@ export default function ProductForm({ mode = "create", productId = null }) {
       setSubmitting(true);
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("description", description);
+      formData.append("description", content);
       formData.append("price", price);
       formData.append("categories", JSON.stringify(categoryIds));
 
@@ -88,8 +90,8 @@ export default function ProductForm({ mode = "create", productId = null }) {
 
       if (addMore) {
         setName("");
-        setDescription("");
         setPrice("");
+        setContent("");
         setCategoryIds([]);
         setExistingImages([]);
         setNewFiles([]);
@@ -103,97 +105,144 @@ export default function ProductForm({ mode = "create", productId = null }) {
     }
   };
 
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      placeholder: "Start typing...",
+      buttons: [
+        "bold",
+        "italic",
+        "underline",
+        "|",
+        "ul",
+        "ol",
+        "|",
+        "font",
+        "fontsize",
+        "brush",
+        "|",
+        "image",
+        "link",
+        "|",
+        "align",
+        "undo",
+        "redo",
+      ],
+      height: 400,
+    }),
+    [],
+  );
+
+  const handleBlur = useCallback((newContent) => {
+    setContent(newContent);
+  }, []);
+
+  const handleChange = useCallback((newContent) => {
+    setContent(newContent);
+  }, []);
+
   if (loading) {
-    return <p>Loading product...</p>;
+    return <Loader />;
   }
 
   return (
-    <form onSubmit={submit} className="w-full max-w-4xl space-y-6">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="productName">Product Name</FieldLabel>
-          <Input
-            id="productName"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Awesome Product"
-            required
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="productDescription">Description</FieldLabel>
-          <Textarea
-            id="productDescription"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder="Product description"
-            rows={4}
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="categories">Categories</FieldLabel>
-          <ComboBoxPopupComponent
-            value={categoryIds}
-            onChange={setCategoryIds}
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="price">Price</FieldLabel>
-          <Input
-            id="price"
-            type="number"
-            min={0}
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-            placeholder="999"
-            required
-          />
-        </Field>
-      </FieldGroup>
-
-      <ProductImageManager
-        existingImages={existingImages}
-        onRemoveExisting={(id) =>
-          setExistingImages((prev) => prev.filter((image) => image.id !== id))
-        }
-        newFiles={newFiles}
-        onFilesChange={setNewFiles}
-        disabled={submitting}
-      />
-
-      <Field orientation="horizontal" className="justify-end gap-3">
-        {mode === "create" && (
-          <Field orientation="horizontal">
-            <Checkbox
-              id="add-checkbox"
-              checked={addMore}
-              onCheckedChange={(checked) => setAddMore(checked)}
+    <>
+      <Button
+        onClick={() => router.push("/dashboard/product")}
+        variant="outline"
+        className="max-w-max mb-4"
+      >
+        <ArrowLeftIcon className="mr-2 h-4 w-4" />
+        Back
+      </Button>
+      <form onSubmit={submit} className="w-full max-w-4xl space-y-6">
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="productName">Product Name</FieldLabel>
+            <Input
+              id="productName"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Awesome Product"
+              required
             />
-            <FieldLabel htmlFor="add-checkbox">Add More</FieldLabel>
           </Field>
-        )}
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.push("/dashboard/product")}
+
+          <Field>
+            <FieldLabel htmlFor="productDescription">Description</FieldLabel>
+            <JoditEditor
+              ref={editor}
+              value={content}
+              config={config}
+              tabIndex={1}
+              onBlur={handleBlur}
+              onChange={handleChange}
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="categories">Categories</FieldLabel>
+            <ComboBoxPopupComponent
+              value={categoryIds}
+              onChange={setCategoryIds}
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="price">Price</FieldLabel>
+            <Input
+              id="price"
+              type="number"
+              min={0}
+              value={price}
+              onChange={(event) => setPrice(event.target.value)}
+              placeholder="999"
+              required
+            />
+          </Field>
+        </FieldGroup>
+
+        <ProductImageManager
+          existingImages={existingImages}
+          onRemoveExisting={(id) =>
+            setExistingImages((prev) => prev.filter((image) => image.id !== id))
+          }
+          newFiles={newFiles}
+          onFilesChange={setNewFiles}
           disabled={submitting}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={submitting}>
-          {submitting
-            ? mode === "edit"
-              ? "Updating..."
-              : "Creating..."
-            : mode === "edit"
-              ? "Update Product"
-              : "Create Product"}
-        </Button>
-      </Field>
-    </form>
+        />
+
+        <Field orientation="horizontal" className="justify-end gap-3">
+          {mode === "create" && (
+            <Field orientation="horizontal">
+              <Checkbox
+                id="add-checkbox"
+                checked={addMore}
+                onCheckedChange={(checked) => setAddMore(checked)}
+              />
+              <FieldLabel htmlFor="add-checkbox">Add More</FieldLabel>
+            </Field>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/dashboard/product")}
+            disabled={submitting}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={submitting}>
+            {submitting
+              ? mode === "edit"
+                ? "Updating..."
+                : "Creating..."
+              : mode === "edit"
+                ? "Update Product"
+                : "Create Product"}
+          </Button>
+        </Field>
+      </form>
+    </>
   );
 }

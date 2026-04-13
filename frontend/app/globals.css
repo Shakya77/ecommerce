@@ -128,3 +128,26 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  .jodit-wysiwyg ul,
+  .rich-text-content ul {
+    list-style-type: disc;
+    list-style-position: outside;
+    margin-left: 1.5rem;
+    padding-left: 0.5rem;
+  }
+
+  .jodit-wysiwyg ol,
+  .rich-text-content ol {
+    list-style-type: decimal;
+    list-style-position: outside;
+    margin-left: 1.5rem;
+    padding-left: 0.5rem;
+  }
+
+  .jodit-wysiwyg li,
+  .rich-text-content li {
+    display: list-item;
+  }
+}

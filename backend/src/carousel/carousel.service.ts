@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateCarouselDto } from './dto/create-carousel.dto';
 import { UpdateCarouselDto } from './dto/update-carousel.dto';
 import { Carousel } from './entities/carousel.entity';
@@ -16,9 +16,17 @@ export class CarouselService {
     files: Express.Multer.File[],
     user: any,
   ) {
+    const check = await this.carouselRepository.findOne({
+      where: { label: createCarouselDto.label },
+    });
+
+    if (check) {
+      throw new BadRequestException('Carousel with this label already exists');
+    }
+
     const data = await this.carouselRepository.create({
       ...createCarouselDto,
-      imageUrl: files[0]?.filename || '',
+      imageUrl: `/${files[0].path.replace(/\\/g, '/').replace(/^\/?/, '')}`,
       createdBy: user.id,
     } as any as Carousel);
 
@@ -26,18 +34,16 @@ export class CarouselService {
   }
 
   async findAll() {
-    return `This action returns all carousel`;
+    return await this.carouselRepository.findAll();
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} carousel`;
+    return await this.carouselRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateCarouselDto: UpdateCarouselDto) {
-    return `This action updates a #${id} carousel`;
-  }
+  async update(id: number, updateCarouselDto: UpdateCarouselDto) {}
 
   async remove(id: number) {
-    return `This action removes a #${id} carousel`;
+    return await this.carouselRepository.destroy({ where: { id } });
   }
 }

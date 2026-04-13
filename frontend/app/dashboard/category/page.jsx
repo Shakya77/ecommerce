@@ -170,6 +170,7 @@ export default function Page() {
       header: "Description",
       cell: ({ row }) => (
         <div
+          className="rich-text-content"
           dangerouslySetInnerHTML={{
             __html: row.original.description || "No description",
           }}

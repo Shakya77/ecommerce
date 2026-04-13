@@ -14,12 +14,16 @@ const toMediaUrl = (path) => {
   return `${apiBaseUrl}${path.startsWith("/") ? path : `/${path}`}`;
 };
 
-export default function ProductImageManager({
+function BaseImageManager({
   existingImages = [],
   onRemoveExisting,
   newFiles = [],
   onFilesChange,
   disabled = false,
+  single = false,
+  addLabel = "Add product images",
+  existingTitle = "Existing Images",
+  newTitle = "New Images",
 }) {
   const fileInputRef = useRef(null);
 
@@ -39,6 +43,11 @@ export default function ProductImageManager({
     }
 
     const selectedFiles = Array.from(files);
+    if (single) {
+      onFilesChange?.([selectedFiles[0]]);
+      return;
+    }
+
     onFilesChange?.([...newFiles, ...selectedFiles]);
   };
 
@@ -69,7 +78,7 @@ export default function ProductImageManager({
           <Upload className="h-5 w-5 text-muted-foreground" />
         </div>
         <p className="text-pretty text-sm font-medium text-foreground">
-          Add product images
+          {addLabel}
         </p>
         <p className="text-pretty text-sm text-muted-foreground mt-1">
           Drag and drop files here or click to browse
@@ -79,7 +88,7 @@ export default function ProductImageManager({
           ref={fileInputRef}
           className="hidden"
           accept="image/*"
-          multiple
+          multiple={!single}
           onChange={(event) => handleFileSelect(event.target.files)}
           disabled={disabled}
         />
@@ -87,7 +96,7 @@ export default function ProductImageManager({
 
       {existingImages.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">Existing Images</h3>
+          <h3 className="text-sm font-medium">{existingTitle}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {existingImages.map((media) => (
               <div key={media.id} className="border rounded-md p-2 space-y-2">
@@ -118,7 +127,7 @@ export default function ProductImageManager({
 
       {previews.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium">New Images</h3>
+          <h3 className="text-sm font-medium">{newTitle}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {previews.map(({ key, url, file }) => (
               <div key={key} className="border rounded-md p-2 space-y-2">
@@ -147,5 +156,21 @@ export default function ProductImageManager({
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProductImageManager(props) {
+  return <BaseImageManager {...props} single={false} />;
+}
+
+export function SingleImageManager(props) {
+  return (
+    <BaseImageManager
+      {...props}
+      single
+      addLabel="Add carousel image"
+      existingTitle="Existing Image"
+      newTitle="New Image"
+    />
   );
 }
