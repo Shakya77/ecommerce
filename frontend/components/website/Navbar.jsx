@@ -42,7 +42,7 @@ const topLinks = [
   { label: "Home", href: "/" },
   { label: "Category", href: "/category" },
   { label: "Cart", href: "/cart" },
-  { label: "Products", href: "/#deals" },
+  { label: "Products", href: "/products" },
   { label: "Sale", href: "/#deals" },
 ];
 
@@ -55,13 +55,8 @@ function isActive(pathname, href) {
 function BrandMark() {
   return (
     <Link href="/" className="group flex items-center gap-3">
-      <span className="flex size-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#111827_0%,#334155_100%)] text-primary-foreground shadow-lg shadow-slate-900/15 ring-1 ring-white/15 transition-transform duration-300 group-hover:-translate-y-0.5">
-        <Package2 className="size-5" />
-      </span>
-      <span className="flex flex-col leading-none">
-        <span className="font-heading text-base font-semibold tracking-[0.2em] uppercase text-foreground">
-          Ecommerce
-        </span>
+      <span className="font-heading text-base font-semibold tracking-[0.2em] uppercase text-foreground">
+        Ecommerce
       </span>
     </Link>
   );
