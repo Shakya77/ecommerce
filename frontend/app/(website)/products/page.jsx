@@ -14,6 +14,7 @@ export default function page() {
         <ProductCard
           key={index}
           image={toImageUrl(product.medias[0].path)}
+          slug={product.slug}
           title={product.name}
           price={product.price}
           inStock={product.inStock}

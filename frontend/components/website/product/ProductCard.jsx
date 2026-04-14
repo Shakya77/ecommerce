@@ -1,10 +1,12 @@
 "use client";
 
 import { Heart, ShoppingCart, Check } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ProductCard({
   image,
+  slug,
   title,
   price,
   onAddToCart,
@@ -25,7 +27,10 @@ export default function ProductCard({
   };
 
   return (
-    <div className="group w-full max-w-sm rounded-sm border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
+    <Link
+      href={`/products/${slug}`}
+      className="group w-full max-w-sm rounded-sm border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+    >
       <div className="relative h-64 overflow-hidden">
         <img
           src={image}
@@ -80,6 +85,6 @@ export default function ProductCard({
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

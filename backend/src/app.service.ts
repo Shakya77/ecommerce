@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PRODUCTS_REPOSITORY } from '../constants';
 import { Category } from './category/entities/category.entity';
 import { Product } from './product/entities/product.entity';
@@ -41,6 +41,37 @@ export class AppService {
         },
       ],
     });
+
+    return data;
+  }
+
+  async getProductDetail(slug: string) {
+    const data = await this.productsRepository.findOne({
+      where: { slug },
+      include: [
+        {
+          model: ProductHasCategory,
+          as: 'productCategories',
+          attributes: ['id', 'categoryId'],
+          include: [
+            {
+              model: Category,
+              as: 'category',
+              attributes: ['id', 'name', 'slug'],
+            },
+          ],
+        },
+        {
+          model: ProductHasMedia,
+          as: 'medias',
+          attributes: ['id', 'path', 'filename', 'type', 'size'],
+        },
+      ],
+    });
+
+    if (!data) {
+      throw new BadRequestException('Product not found');
+    }
 
     return data;
   }
