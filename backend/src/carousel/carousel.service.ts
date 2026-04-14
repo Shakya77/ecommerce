@@ -34,14 +34,36 @@ export class CarouselService {
   }
 
   async findAll() {
-    return await this.carouselRepository.findAll();
+    return await this.carouselRepository.findAll({
+      order: [['createdAt', 'DESC']],
+    });
   }
 
   async findOne(id: number) {
     return await this.carouselRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateCarouselDto: UpdateCarouselDto) {}
+  async update(
+    id: number,
+    updateCarouselDto: UpdateCarouselDto,
+    files: Express.Multer.File[] = [],
+  ) {
+    const carousel = await this.findOne(id);
+
+    if (!carousel) {
+      throw new BadRequestException('Carousel not found');
+    }
+
+    if (files.length > 0) {
+      updateCarouselDto.imageUrl = `/${files[0].path.replace(/\\/g, '/').replace(/^\/?/, '')}`;
+    }
+
+    await this.carouselRepository.update(updateCarouselDto, {
+      where: { id },
+    });
+
+    return await this.findOne(id);
+  }
 
   async remove(id: number) {
     return await this.carouselRepository.destroy({ where: { id } });

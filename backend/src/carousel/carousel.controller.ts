@@ -62,15 +62,27 @@ export class CarouselController {
   }
 
   @Patch(':id')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        destination: './uploads/carousels',
+        filename: (req, file, cb) => {
+          const uniqueName = `${Date.now()}-${file.originalname}`;
+          cb(null, uniqueName);
+        },
+      }),
+    }),
+  )
   update(
     @Param('id') id: string,
     @Body() updateCarouselDto: UpdateCarouselDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.carouselService.update(+id, updateCarouselDto);
+    return this.carouselService.update(+id, updateCarouselDto, files || []);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.carouselService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.carouselService.remove(id);
   }
 }
