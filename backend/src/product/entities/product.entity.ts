@@ -37,7 +37,7 @@ export class Product extends Model<Product> {
   slug: string;
 
   @Column({
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true,
   })
   description: string;
@@ -48,8 +48,8 @@ export class Product extends Model<Product> {
   })
   price: number;
 
-  @BelongsToMany(() => Category, () => ProductHasCategory)
-  categories: Category[];
+  @HasMany(() => ProductHasCategory)
+  productCategories: ProductHasCategory[];
 
   @HasMany(() => ProductHasMedia)
   medias: ProductHasMedia[];

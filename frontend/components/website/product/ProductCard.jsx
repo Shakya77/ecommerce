@@ -25,7 +25,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className="group w-full max-w-sm rounded-sm border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="group w-full max-w-sm rounded-sm border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer">
       <div className="relative h-64 overflow-hidden">
         <img
           src={image}
@@ -41,13 +41,13 @@ export default function ProductCard({
             {title}
           </h3>
 
-          <p className="text-xl font-bold text-gray-900">${price.toFixed(2)}</p>
+          <p className="text-sm font-bold text-gray-900">Rs. {price}</p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={handleAddToWishlist}
-            className={`h-11 w-11 flex items-center justify-center rounded-sm border transition-all duration-300
+            className={`h-9 w-9 flex items-center justify-center rounded-sm border transition-all duration-300
               ${
                 isWishlisted
                   ? "bg-red-50 border-red-500 text-red-500 scale-105"
@@ -59,7 +59,7 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            className={`flex-1 h-11 flex items-center justify-center gap-2 rounded-sm font-medium transition-all duration-300
+            className={`flex-1 h-9 flex items-center justify-center gap-2 rounded-sm font-medium transition-all duration-300
               ${
                 isAdded
                   ? "bg-green-500 text-white"

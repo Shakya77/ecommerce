@@ -3,7 +3,6 @@ import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import slugify from 'slugify';
 import {
-  CATEGORIES_REPOSITORY,
   PRODUCT_HAS_CATEGORY_REPOSITORY,
   PRODUCT_HAS_MEDIA_REPOSITORY,
   PRODUCTS_REPOSITORY,
@@ -27,8 +26,6 @@ export class ProductService {
     private readonly productCategoryRepository: typeof ProductHasCategory,
     @Inject(PRODUCT_HAS_MEDIA_REPOSITORY)
     private readonly productMediaRepository: typeof ProductHasMedia,
-    @Inject(CATEGORIES_REPOSITORY)
-    private readonly categoryRepository: typeof Category,
     @Inject('SEQUELIZE')
     private readonly sequelize: Sequelize,
   ) {}

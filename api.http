@@ -73,3 +73,7 @@ Authorization: Bearer {{token}}
 PUT  {{host}}/category/2/status
 Content-Type: application/json
 Authorization: Bearer {{token}}
+
+### Change Status
+GET  {{host}}/products
+Content-Type: application/json

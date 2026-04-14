@@ -13,6 +13,7 @@ import {
   Search,
   ShieldCheck,
   ShoppingBag,
+  ShoppingCart,
   Sparkles,
   Truck,
   UserRound,
@@ -153,6 +154,17 @@ export function NavigationBar() {
               </Link>
             </Button>
 
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Link href="/">
+                <ShoppingCart className="size-4" />
+                <span className="sr-only">Shopping Cart</span>
+              </Link>
+            </Button>
             {user ? (
               <div className="flex items-center gap-2">
                 <Button asChild variant="outline" className="rounded-full px-4">
