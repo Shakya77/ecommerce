@@ -22,4 +22,10 @@ export class AppController {
   async getProductDetail(@Param('slug') slug: string) {
     return await this.appService.getProductDetail(slug);
   }
+
+  @Public()
+  @Get('categories')
+  async getCategories() {
+    return await this.appService.getCategories();
+  }
 }

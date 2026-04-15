@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { PRODUCTS_REPOSITORY } from '../constants';
+import { CATEGORIES_REPOSITORY, PRODUCTS_REPOSITORY } from '../constants';
 import { Category } from './category/entities/category.entity';
 import { Product } from './product/entities/product.entity';
 import { ProductHasMedia } from './product/entities/product-has-media.entity';
@@ -9,6 +9,9 @@ export class AppService {
   constructor(
     @Inject(PRODUCTS_REPOSITORY)
     private readonly productsRepository: typeof Product,
+
+    @Inject(CATEGORIES_REPOSITORY)
+    private readonly categoriesRepository: typeof Category,
   ) {}
 
   getHello(): string {
@@ -72,6 +75,16 @@ export class AppService {
     if (!data) {
       throw new BadRequestException('Product not found');
     }
+
+    return data;
+  }
+
+  async getCategories() {
+    const data = await this.categoriesRepository.findAll({
+      where: { isActive: true },
+      order: [['createdAt', 'DESC']],
+      attributes: ['id', 'name', 'slug'],
+    });
 
     return data;
   }
