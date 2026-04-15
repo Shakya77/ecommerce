@@ -9,6 +9,7 @@ import { Heart, ShoppingCart, Minus, Plus } from "lucide-react";
 import { fetcher } from "@/constants";
 import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
+import { TitleChange } from "@/utils/title";
 
 export default function ProductDetail({ slug }) {
   const {
@@ -22,6 +23,8 @@ export default function ProductDetail({ slug }) {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
+
+  console.log(product?.name);
 
   if (isLoading) {
     return <Loader />;
@@ -43,8 +46,7 @@ export default function ProductDetail({ slug }) {
     );
   }
 
-  const primaryImage =
-    toImageUrl(product?.medias?.[0]?.path) || "/placeholder.jpg";
+  const primaryImage = toImageUrl(product?.medias?.[0]?.path);
 
   const allImages = product?.medias || [];
 
@@ -72,6 +74,7 @@ export default function ProductDetail({ slug }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <TitleChange actualTitle={product?.name} />
       <div className="flex flex-col">
         <div className="mb-4 bg-gray-50 aspect-square flex items-center justify-center overflow-hidden">
           <img
@@ -81,7 +84,6 @@ export default function ProductDetail({ slug }) {
           />
         </div>
 
-        {/* Thumbnails */}
         {allImages.length > 1 && (
           <div className="flex gap-3">
             {allImages.map((image, idx) => {
@@ -147,7 +149,7 @@ export default function ProductDetail({ slug }) {
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: product.description.slice(0, 250) + "...",
+                    __html: product.description.slice(0, 1050) + "...",
                   }}
                 />
               )}

@@ -5,6 +5,8 @@ import { ProductHasCategory } from 'src/product/entities/product-has-category.en
 import { Product } from 'src/product/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Carousel } from 'src/carousel/entities/carousel.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
 
 export const databaseProviders = [
   {
@@ -26,6 +28,8 @@ export const databaseProviders = [
         ProductHasMedia,
         ProductHasCategory,
         Carousel,
+        Cart,
+        Wishlist,
       ]);
 
       await sequelize.sync();

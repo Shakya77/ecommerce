@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
+import { TitleChange } from "@/utils/title";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
     >
       <Suspense fallback={<Loading />}>
         <AuthProvider>
+          <TitleChange />
           <body>
             {children}
             <Toaster closeButton position="top-center" />

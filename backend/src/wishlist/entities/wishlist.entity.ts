@@ -8,10 +8,10 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'carts',
+  tableName: 'wishlists',
   paranoid: true,
 })
-export class Cart extends Model<Cart> {
+export class Wishlist extends Model<Wishlist> {
   @PrimaryKey
   @AutoIncrement
   @Column({
@@ -32,16 +32,8 @@ export class Cart extends Model<Cart> {
   productId: number;
 
   @Column({
-    type: DataType.DECIMAL(10, 2),
-    allowNull: false,
-    defaultValue: 0,
+    type: DataType.BOOLEAN,
+    defaultValue: true,
   })
-  quantity: number;
-
-  @Column({
-    type: DataType.DECIMAL(10, 2),
-    allowNull: false,
-    defaultValue: 0,
-  })
-  price: number;
+  isActive: boolean;
 }

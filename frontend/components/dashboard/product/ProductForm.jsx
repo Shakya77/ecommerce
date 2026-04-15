@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import JoditEditor from "jodit-react";
 import { ArrowLeftIcon } from "lucide-react";
+import { postProduct } from "@/services/dashboard.http";
 
 export default function ProductForm({ mode = "create", productId = null }) {
   const router = useRouter();
@@ -84,7 +85,7 @@ export default function ProductForm({ mode = "create", productId = null }) {
         await api.patch(`/product/${productId}`, formData);
         toast.success("Product updated successfully");
       } else {
-        await api.post("/product", formData);
+        await postProduct(formData);
         toast.success("Product created successfully");
       }
 

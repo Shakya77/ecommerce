@@ -11,6 +11,7 @@ import { CartModule } from './cart/cart.module';
 import { ProductModule } from './product/product.module';
 import { UploadModule } from './upload/upload.module';
 import { CarouselModule } from './carousel/carousel.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CarouselModule } from './carousel/carousel.module';
     CartModule,
     UploadModule,
     CarouselModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
