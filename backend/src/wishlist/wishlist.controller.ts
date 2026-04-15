@@ -32,13 +32,13 @@ export class WishlistController {
   }
 
   @Get()
-  findAll() {
-    return this.wishlistService.findAll();
+  findAll(@Request() request: any) {
+    return this.wishlistService.findAll(request.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistService.findOne(+id);
+  findOne(@Param('id') id: string, @Request() request: any) {
+    return this.wishlistService.findOne(+id, request.user);
   }
 
   @Patch(':id')
@@ -50,7 +50,7 @@ export class WishlistController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistService.remove(+id);
+  remove(@Param('id') id: string, @Request() request: any) {
+    return this.wishlistService.remove(+id, request.user);
   }
 }

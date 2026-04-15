@@ -11,6 +11,7 @@ import {
 import { Category } from 'src/category/entities/category.entity';
 import { ProductHasMedia } from './product-has-media.entity';
 import { ProductHasCategory } from './product-has-category.entity';
+import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
 
 @Table({
   tableName: 'products',
@@ -53,4 +54,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => ProductHasMedia)
   medias: ProductHasMedia[];
+
+  @HasMany(() => Wishlist)
+  wishlists: Wishlist[];
 }
