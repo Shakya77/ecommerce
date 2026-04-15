@@ -41,7 +41,9 @@ export default function ProductForm({ mode = "create", productId = null }) {
 
         setName(product.name || "");
         setPrice(product.price?.toString() || "");
-        setCategoryIds((product.categories || []).map((item) => item.id));
+        setCategoryIds(
+          (product.productCategories || []).map((item) => item.id),
+        );
         setExistingImages(product.medias || []);
         setContent(product.description || "");
       } catch (error) {

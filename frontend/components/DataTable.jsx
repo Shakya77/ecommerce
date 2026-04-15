@@ -77,7 +77,6 @@ export function DataTable({ columns, data }) {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
     </div>
   );
 }

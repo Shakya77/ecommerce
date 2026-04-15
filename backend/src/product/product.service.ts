@@ -196,9 +196,16 @@ export class ProductService {
     const data = await this.productRepository.findAll({
       include: [
         {
-          model: Category,
-          through: { attributes: [] },
-          attributes: ['id', 'name'],
+          model: ProductHasCategory,
+          as: 'productCategories',
+          attributes: ['id', 'categoryId'],
+          include: [
+            {
+              model: Category,
+              as: 'category',
+              attributes: ['id', 'name', 'slug'],
+            },
+          ],
         },
         {
           model: ProductHasMedia,
@@ -216,9 +223,16 @@ export class ProductService {
       where: { id },
       include: [
         {
-          model: Category,
-          through: { attributes: [] },
-          attributes: ['id', 'name'],
+          model: ProductHasCategory,
+          as: 'productCategories',
+          attributes: ['id', 'categoryId'],
+          include: [
+            {
+              model: Category,
+              as: 'category',
+              attributes: ['id', 'name', 'slug'],
+            },
+          ],
         },
         {
           model: ProductHasMedia,
