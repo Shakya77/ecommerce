@@ -145,7 +145,7 @@ export function NavigationBar() {
               size="icon-sm"
               className="text-muted-foreground hover:text-foreground"
             >
-              <Link href="/">
+              <Link href="/wishlist">
                 <Heart className="size-4" />
                 <span className="sr-only">Wishlist</span>
               </Link>

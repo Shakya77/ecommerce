@@ -28,6 +28,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isAuthenticated = Boolean(token && user);
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const decoded = decodeToken(storedToken);
@@ -57,10 +59,11 @@ export function AuthProvider({ children }) {
       token,
       user,
       loading,
+      isAuthenticated,
       login,
       logout,
     }),
-    [token, user, loading],
+    [token, user, loading, isAuthenticated],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

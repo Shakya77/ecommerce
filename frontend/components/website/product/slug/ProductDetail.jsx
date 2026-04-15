@@ -9,7 +9,10 @@ import { Heart, ShoppingCart, Minus, Plus } from "lucide-react";
 import { fetcher } from "@/constants";
 import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
-import { TitleChange } from "@/utils/title";
+import { useAuth } from "@/context/AuthContext";
+import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
+import { onAddToWishlist, onRemoveFromWishlist } from "@/services/website.http";
+import { toast } from "sonner";
 
 export default function ProductDetail({ slug }) {
   const {
@@ -18,13 +21,25 @@ export default function ProductDetail({ slug }) {
     isLoading,
   } = useSWR(`/products/${slug}`, fetcher);
 
+  const { isAuthenticated, loading } = useAuth();
+
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [authPromptAction, setAuthPromptAction] = useState(null);
 
-  console.log(product?.name);
+  const requiresAuth = !loading && !isAuthenticated;
+
+  const promptForAuth = (action) => {
+    if (requiresAuth) {
+      setAuthPromptAction(action);
+      return true;
+    }
+
+    return false;
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -61,6 +76,10 @@ export default function ProductDetail({ slug }) {
   const decrementQuantity = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
+    if (promptForAuth("cart")) {
+      return;
+    }
+
     setIsAddingToCart(true);
     setTimeout(() => {
       console.log(`Added ${quantity} item(s) to cart`);
@@ -68,148 +87,180 @@ export default function ProductDetail({ slug }) {
     }, 500);
   };
 
-  const toggleWishlist = () => {
-    setIsWishlisted((prev) => !prev);
+  const toggleWishlist = async () => {
+    if (promptForAuth("wishlist")) {
+      return;
+    }
+
+    const nextWishlisted = !isWishlisted;
+
+    try {
+      if (nextWishlisted) {
+        const { data } = await onAddToWishlist(product.id);
+        setIsWishlisted(true);
+        toast.success(data.message);
+      } else {
+        const { data } = await onRemoveFromWishlist(product.id);
+        setIsWishlisted(false);
+        toast.success(data.message || "Product removed from wishlist");
+      }
+    } catch (error) {
+      console.error("Unable to update wishlist:", error);
+      toast.error("Unable to update wishlist");
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-      <TitleChange actualTitle={product?.name} />
-      <div className="flex flex-col">
-        <div className="mb-4 bg-gray-50 aspect-square flex items-center justify-center overflow-hidden">
-          <img
-            src={currentImage}
-            alt={product?.name || "Product image"}
-            className="w-full h-full object-contain transition-all duration-300"
-          />
+    <>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
+        <div className="flex flex-col">
+          <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden bg-gray-50">
+            <img
+              src={currentImage}
+              alt={product?.name || "Product image"}
+              className="h-full w-full object-contain transition-all duration-300"
+            />
+          </div>
+
+          {allImages.length > 1 && (
+            <div className="flex gap-3">
+              {allImages.map((image, idx) => {
+                const imgUrl = toImageUrl(image.path);
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(imgUrl)}
+                    className={`flex h-20 w-20 items-center justify-center border bg-gray-50 transition-colors ${
+                      currentImage === imgUrl
+                        ? "border-black"
+                        : "border-gray-200 hover:border-gray-400"
+                    }`}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={`Product view ${idx + 1}`}
+                      className="h-full w-full object-contain p-2"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {allImages.length > 1 && (
-          <div className="flex gap-3">
-            {allImages.map((image, idx) => {
-              const imgUrl = toImageUrl(image.path);
+        <div className="flex flex-col">
+          {product.productCategories?.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {product.productCategories.slice(0, 3).map((pc) => (
+                <Badge key={pc.id} variant="secondary">
+                  {pc.category.name}
+                </Badge>
+              ))}
+            </div>
+          )}
 
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(imgUrl)}
-                  className={`w-20 h-20 bg-gray-50 border flex items-center justify-center transition-colors ${
-                    currentImage === imgUrl
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={imgUrl}
-                    alt={`Product view ${idx + 1}`}
-                    className="w-full h-full object-contain p-2"
+          <h1 className="mb-4 text-2xl font-semibold text-black sm:text-3xl">
+            {product.name}
+          </h1>
+
+          <div className="mb-6 border-b border-gray-200 pb-6">
+            <p className="text-3xl font-bold text-black">
+              Rs. {product.price.toLocaleString("en-IN")}
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Free Shipping Available
+            </p>
+          </div>
+
+          {product.description && (
+            <div className="mb-8 border-b border-gray-200 pb-8">
+              <h2 className="mb-3 text-sm font-semibold uppercase text-black">
+                Key Features
+              </h2>
+
+              <div className="prose prose-sm max-w-none text-sm leading-relaxed text-gray-700">
+                {showFullDescription ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: product.description,
+                    }}
                   />
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                ) : (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: product.description.slice(0, 1050) + "...",
+                    }}
+                  />
+                )}
+              </div>
 
-      <div className="flex flex-col">
-        {product.productCategories?.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {product.productCategories.slice(0, 3).map((pc) => (
-              <Badge key={pc.id} variant="secondary">
-                {pc.category.name}
-              </Badge>
-            ))}
-          </div>
-        )}
+              <button
+                onClick={() => setShowFullDescription((prev) => !prev)}
+                className="mt-3 text-sm font-medium text-blue-600 hover:underline"
+              >
+                {showFullDescription ? "Show Less" : "Show More"}
+              </button>
+            </div>
+          )}
 
-        <h1 className="text-2xl sm:text-3xl font-semibold text-black mb-4">
-          {product.name}
-        </h1>
+          <div className="flex flex-col gap-4">
+            <label className="text-sm font-semibold uppercase">Quantity</label>
 
-        <div className="mb-6 pb-6 border-b border-gray-200">
-          <p className="text-3xl font-bold text-black">
-            Rs. {product.price.toLocaleString("en-IN")}
-          </p>
-          <p className="text-sm text-gray-600 mt-2">Free Shipping Available</p>
-        </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="icon" onClick={decrementQuantity}>
+                <Minus className="h-4 w-4" />
+              </Button>
 
-        {product.description && (
-          <div className="mb-8 pb-8 border-b border-gray-200">
-            <h2 className="text-sm font-semibold text-black mb-3 uppercase">
-              Key Features
-            </h2>
+              <Input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => handleQuantityChange(e.target.value)}
+                className="w-16 text-center"
+              />
 
-            <div className="text-gray-700 text-sm leading-relaxed prose prose-sm max-w-none">
-              {showFullDescription ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product.description,
-                  }}
-                />
-              ) : (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product.description.slice(0, 1050) + "...",
-                  }}
-                />
-              )}
+              <Button variant="outline" size="icon" onClick={incrementQuantity}>
+                <Plus className="h-4 w-4" />
+              </Button>
             </div>
 
-            <button
-              onClick={() => setShowFullDescription((prev) => !prev)}
-              className="mt-3 text-sm font-medium text-blue-600 hover:underline"
-            >
-              {showFullDescription ? "Show Less" : "Show More"}
-            </button>
-          </div>
-        )}
+            <div className="flex gap-3">
+              <Button
+                onClick={handleAddToCart}
+                disabled={isAddingToCart}
+                className="flex-1 h-12 bg-black text-white"
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                {isAddingToCart ? "Adding..." : "Add to Cart"}
+              </Button>
 
-        <div className="flex flex-col gap-4">
-          <label className="text-sm font-semibold uppercase">Quantity</label>
-
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={decrementQuantity}>
-              <Minus className="h-4 w-4" />
-            </Button>
-
-            <Input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => handleQuantityChange(e.target.value)}
-              className="w-16 text-center"
-            />
-
-            <Button variant="outline" size="icon" onClick={incrementQuantity}>
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="flex gap-3">
-            <Button
-              onClick={handleAddToCart}
-              disabled={isAddingToCart}
-              className="flex-1 h-12 bg-black text-white"
-            >
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              {isAddingToCart ? "Adding..." : "Add to Cart"}
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleWishlist}
-              className={`h-12 w-12 ${isWishlisted ? "bg-red-50" : ""}`}
-            >
-              <Heart
-                className={`h-5 w-5 ${
-                  isWishlisted ? "fill-red-500 text-red-500" : "text-gray-700"
-                }`}
-              />
-            </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleWishlist}
+                className={`h-12 w-12 ${isWishlisted ? "bg-red-50" : ""}`}
+              >
+                <Heart
+                  className={`h-5 w-5 ${
+                    isWishlisted ? "fill-red-500 text-red-500" : "text-gray-700"
+                  }`}
+                />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <RequireAuthDialog
+        open={Boolean(authPromptAction)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setAuthPromptAction(null);
+          }
+        }}
+        action={authPromptAction}
+      />
+    </>
   );
 }
