@@ -5,6 +5,7 @@ import { Trash2, ShoppingCart, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toImageUrl } from "@/lib/image";
+import { onAddToCart } from "@/services/website.http";
 
 export default function WishListCard({ data }) {
   return (
@@ -39,6 +40,7 @@ export default function WishListCard({ data }) {
                 <Button
                   variant="outline"
                   size="default"
+                  onClick={() => onAddToCart(data.getProduct.id)}
                   className="group/btn relative overflow-hidden transition-all duration-300 hover:border-blue-500 hover:bg-blue-50"
                 >
                   <ShoppingCart className="w-4 h-4 mr-2 transition-transform group-hover/btn:scale-110" />

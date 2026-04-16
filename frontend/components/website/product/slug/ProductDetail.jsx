@@ -13,6 +13,15 @@ import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import { onAddToWishlist, onRemoveFromWishlist } from "@/services/website.http";
 import { toast } from "sonner";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 export default function ProductDetail({ slug }) {
   const {
@@ -75,11 +84,11 @@ export default function ProductDetail({ slug }) {
   const incrementQuantity = () => setQuantity((q) => q + 1);
   const decrementQuantity = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (promptForAuth("cart")) {
       return;
     }
-
+    await onAddToCart(product.id);
     setIsAddingToCart(true);
     setTimeout(() => {
       console.log(`Added ${quantity} item(s) to cart`);
@@ -112,7 +121,27 @@ export default function ProductDetail({ slug }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>
+              <Link href="/products">Products</Link>
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{product.name.slice(0, 50) + "..."}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12 mt-3">
         <div className="flex flex-col">
           <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden bg-gray-50">
             <img
@@ -227,7 +256,7 @@ export default function ProductDetail({ slug }) {
 
             <div className="flex gap-3">
               <Button
-                onClick={handleAddToCart}
+                onClick={handleAddToCart(product.id)}
                 disabled={isAddingToCart}
                 className="flex-1 h-12 bg-black text-white"
               >

@@ -39,11 +39,13 @@ export const onRemoveFromWishlist = async (productId) => {
   }
 };
 
-// export const getWishlist = async () => {
-//   try {
-//     const data = await api.get("/wishlist");
-//   } catch (error) {
-//     console.error("Error fetching wishlist:", error);
-//     return null;
-//   }
-// };
+export const onAddToCart = async (productId) => {
+  try {
+    const data = await api.post(`/cart`, { productId });
+
+    return data;
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+    return null;
+  }
+};
