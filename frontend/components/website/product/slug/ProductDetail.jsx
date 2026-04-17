@@ -11,7 +11,11 @@ import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
-import { onAddToWishlist, onRemoveFromWishlist } from "@/services/website.http";
+import {
+  onAddToCart,
+  onAddToWishlist,
+  onRemoveFromWishlist,
+} from "@/services/website.http";
 import { toast } from "sonner";
 import {
   Breadcrumb,
@@ -88,10 +92,12 @@ export default function ProductDetail({ slug }) {
     if (promptForAuth("cart")) {
       return;
     }
-    await onAddToCart(product.id);
+
+    const { data } = await onAddToCart(product.id, quantity);
+    toast.success(data?.message);
     setIsAddingToCart(true);
     setTimeout(() => {
-      console.log(`Added ${quantity} item(s) to cart`);
+      setQuantity(1);
       setIsAddingToCart(false);
     }, 500);
   };
@@ -197,9 +203,6 @@ export default function ProductDetail({ slug }) {
             <p className="text-3xl font-bold text-black">
               Rs. {product.price.toLocaleString("en-IN")}
             </p>
-            <p className="mt-2 text-sm text-gray-600">
-              Free Shipping Available
-            </p>
           </div>
 
           {product.description && (
@@ -256,7 +259,7 @@ export default function ProductDetail({ slug }) {
 
             <div className="flex gap-3">
               <Button
-                onClick={handleAddToCart(product.id)}
+                onClick={() => handleAddToCart(product.id)}
                 disabled={isAddingToCart}
                 className="flex-1 h-12 bg-black text-white"
               >

@@ -1,9 +1,9 @@
 import { CARTS_REPOSITORY } from '../../constants';
-import { CartService } from './cart.service';
+import { Cart } from './entities/cart.entity';
 
-export const CartProviders = [
+export const cartProviders = [
   {
     provide: CARTS_REPOSITORY,
-    useValue: CartService,
+    useValue: Cart,
   },
 ];
