@@ -3,9 +3,8 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Heart, ShoppingCart, Minus, Plus } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { fetcher } from "@/constants";
 import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
@@ -26,6 +25,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { QuantityInput } from "@/components/QuantityInput";
+import WishlistButton from "@/components/WishlistButton";
 
 export default function ProductDetail({ slug }) {
   const {
@@ -80,14 +81,6 @@ export default function ProductDetail({ slug }) {
 
   const currentImage = selectedImage || primaryImage;
 
-  const handleQuantityChange = (value) => {
-    const num = parseInt(value, 10);
-    if (!isNaN(num) && num > 0) setQuantity(num);
-  };
-
-  const incrementQuantity = () => setQuantity((q) => q + 1);
-  const decrementQuantity = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
-
   const handleAddToCart = async () => {
     if (promptForAuth("cart")) {
       return;
@@ -100,29 +93,6 @@ export default function ProductDetail({ slug }) {
       setQuantity(1);
       setIsAddingToCart(false);
     }, 500);
-  };
-
-  const toggleWishlist = async () => {
-    if (promptForAuth("wishlist")) {
-      return;
-    }
-
-    const nextWishlisted = !isWishlisted;
-
-    try {
-      if (nextWishlisted) {
-        const { data } = await onAddToWishlist(product.id);
-        setIsWishlisted(true);
-        toast.success(data.message);
-      } else {
-        const { data } = await onRemoveFromWishlist(product.id);
-        setIsWishlisted(false);
-        toast.success(data.message || "Product removed from wishlist");
-      }
-    } catch (error) {
-      console.error("Unable to update wishlist:", error);
-      toast.error("Unable to update wishlist");
-    }
   };
 
   return (
@@ -239,23 +209,7 @@ export default function ProductDetail({ slug }) {
           <div className="flex flex-col gap-4">
             <label className="text-sm font-semibold uppercase">Quantity</label>
 
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="icon" onClick={decrementQuantity}>
-                <Minus className="h-4 w-4" />
-              </Button>
-
-              <Input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={(e) => handleQuantityChange(e.target.value)}
-                className="w-16 text-center"
-              />
-
-              <Button variant="outline" size="icon" onClick={incrementQuantity}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            <QuantityInput value={quantity} onChange={setQuantity} />
 
             <div className="flex gap-3">
               <Button
@@ -267,18 +221,10 @@ export default function ProductDetail({ slug }) {
                 {isAddingToCart ? "Adding..." : "Add to Cart"}
               </Button>
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleWishlist}
-                className={`h-12 w-12 ${isWishlisted ? "bg-red-50" : ""}`}
-              >
-                <Heart
-                  className={`h-5 w-5 ${
-                    isWishlisted ? "fill-red-500 text-red-500" : "text-gray-700"
-                  }`}
-                />
-              </Button>
+              <WishlistButton
+                isWishlisted={isWishlisted}
+                onToggle={setIsWishlisted}
+              />
             </div>
           </div>
         </div>

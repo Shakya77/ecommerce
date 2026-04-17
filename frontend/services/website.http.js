@@ -49,3 +49,14 @@ export const onAddToCart = async (productId, quantity = 1) => {
     return null;
   }
 };
+
+export const getCartItems = async () => {
+  try {
+    const { data } = await api.get("/cart");
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching cart items:", error);
+    return null;
+  }
+};

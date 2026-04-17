@@ -25,17 +25,16 @@ export class CartController {
   }
 
   @Get()
-  findAll() {
-    return this.cartService.findAll();
+  async findAll(@Request() req) {
+    return await this.cartService.findAll(req.user);
   }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
+  async update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
+    return await this.cartService.update(+id, updateCartDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.cartService.remove(+id);
   }
 }

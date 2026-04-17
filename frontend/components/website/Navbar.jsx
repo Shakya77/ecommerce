@@ -157,7 +157,7 @@ export function NavigationBar() {
               size="icon-sm"
               className="text-muted-foreground hover:text-foreground"
             >
-              <Link href="/">
+              <Link href="/cart">
                 <ShoppingCart className="size-4" />
                 <span className="sr-only">Shopping Cart</span>
               </Link>
@@ -271,7 +271,7 @@ export function NavigationBar() {
                     variant="ghost"
                     className="flex items-center justify-center gap-2 rounded-2xl text-muted-foreground hover:text-foreground"
                   >
-                    <Link href="/">
+                    <Link href="/wishlist">
                       <Heart className="size-4" />
                       <span className="text-sm">Wishlist</span>
                     </Link>
@@ -283,7 +283,7 @@ export function NavigationBar() {
                     variant="ghost"
                     className="flex items-center justify-center gap-2 rounded-2xl text-muted-foreground hover:text-foreground"
                   >
-                    <Link href="/">
+                    <Link href="/cart">
                       <ShoppingCart className="size-4" />
                       <span className="text-sm">Cart</span>
                     </Link>

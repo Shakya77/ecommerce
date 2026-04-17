@@ -5,6 +5,9 @@ import { Cart } from './entities/cart.entity';
 import { CARTS_REPOSITORY, PRODUCTS_REPOSITORY } from '../../constants';
 import { Product } from 'src/product/entities/product.entity';
 import { Sequelize } from 'sequelize';
+import { Category } from 'src/category/entities/category.entity';
+import { ProductHasCategory } from 'src/product/entities/product-has-category.entity';
+import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
 
 @Injectable()
 export class CartService {
@@ -75,8 +78,37 @@ export class CartService {
     return data;
   }
 
-  async findAll() {
-    return await this.cartRepository.findAll();
+  async findAll(user: { id: number }) {
+    return await this.cartRepository.findAll({
+      where: { isActive: true, userId: user.id },
+      include: [
+        {
+          model: Product,
+          as: 'getProduct',
+          include: [
+            {
+              model: ProductHasMedia,
+              as: 'medias',
+              attributes: ['id', 'path', 'filename', 'type', 'size'],
+              limit: 1,
+              order: [['createdAt', 'DESC']],
+            },
+            {
+              model: ProductHasCategory,
+              as: 'productCategories',
+              attributes: ['id', 'categoryId'],
+              include: [
+                {
+                  model: Category,
+                  as: 'category',
+                  attributes: ['id', 'name', 'slug'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
   }
 
   async remove(id: number) {

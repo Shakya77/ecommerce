@@ -47,6 +47,10 @@ export class Cart extends Model<Cart> {
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 1,
+    get() {
+      const value = this.getDataValue('quantity');
+      return value ? Number(value) : null;
+    },
   })
   quantity: number;
 
@@ -54,6 +58,10 @@ export class Cart extends Model<Cart> {
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
     defaultValue: 0,
+    get() {
+      const value = this.getDataValue('price');
+      return value ? Number(value) : null;
+    },
   })
   price: number;
 

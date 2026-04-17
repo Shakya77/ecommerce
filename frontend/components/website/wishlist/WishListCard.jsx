@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Trash2, ShoppingCart, Heart } from "lucide-react";
+import { Trash2, ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toImageUrl } from "@/lib/image";

@@ -3,7 +3,6 @@
 import { Heart, ShoppingCart, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 
@@ -14,6 +13,7 @@ export default function ProductCard({
   price,
   onAddToCart,
   onAddToWishlist,
+  props,
 }) {
   const { isAuthenticated, loading } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
