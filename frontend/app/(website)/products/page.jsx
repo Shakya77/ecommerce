@@ -13,7 +13,7 @@ import Link from "next/link";
 
 export async function generateMetadata({ params }) {
   return {
-    title: "Products",
+    title: "Products | E-commerce",
     description: "Browse our collection of products",
   };
 }
