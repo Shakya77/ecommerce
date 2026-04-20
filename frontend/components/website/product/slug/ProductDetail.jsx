@@ -11,15 +11,6 @@ import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import { onAddToCart } from "@/services/website.http";
 import AddToCartButton from "@/components/website/product/AddToCartButton";
 import { toast } from "sonner";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
 import { QuantityInput } from "@/components/QuantityInput";
 import WishlistButton from "@/components/WishlistButton";
 import DOMPurify from "dompurify";
@@ -97,26 +88,6 @@ export default function ProductDetail({ slug }) {
 
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Home</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>
-              <Link href="/products">Products</Link>
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{product.name.slice(0, 50) + "..."}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12 mt-3">
         <div className="flex flex-col">
           <div className="mb-4 flex aspect-square items-center justify-center overflow-hidden bg-gray-50">

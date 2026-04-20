@@ -95,7 +95,7 @@ export default function page() {
   ];
 
   const edit = async (id) => {
-    router.push(`/dashboard/carousel/${id}/edit`);
+    router.push(`/admin/dashboard/carousel/${id}/edit`);
   };
 
   const remove = async (id) => {
@@ -115,7 +115,7 @@ export default function page() {
 
   return (
     <>
-      <Link href="/dashboard/carousel/create">
+      <Link href="/admin/dashboard/carousel/create">
         <Button variant="outline">
           <Plus />
           Create

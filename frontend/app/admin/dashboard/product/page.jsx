@@ -70,7 +70,7 @@ export default function Page() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`/dashboard/product/${row.original.id}/edit`}>
+              <Link href={`/admin/dashboard/product/${row.original.id}/edit`}>
                 <Edit />
                 Edit
               </Link>
@@ -97,7 +97,7 @@ export default function Page() {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Products</h2>
         <Button asChild>
-          <Link href="/dashboard/product/create">
+          <Link href="/admin/dashboard/product/create">
             <Plus />
             Create Product
           </Link>

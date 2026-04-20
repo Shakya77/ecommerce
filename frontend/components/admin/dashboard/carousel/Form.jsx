@@ -1,6 +1,6 @@
 "use client";
 
-import { SingleImageManager } from "@/components/dashboard/product/ProductImageManager";
+import { SingleImageManager } from "@/components/admin/dashboard/product/ProductImageManager";
 import { Textarea } from "@/components/ui/textarea";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -88,7 +88,7 @@ export default function Form({ mode, carouselId }) {
         toast.success("Carousel created successfully");
       }
 
-      router.push("/dashboard/carousel");
+      router.push("/admin/dashboard/carousel");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to save carousel");
     } finally {
