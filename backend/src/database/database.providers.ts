@@ -7,6 +7,8 @@ import { User } from 'src/users/entities/user.entity';
 import { Carousel } from 'src/carousel/entities/carousel.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
+import { Order } from 'src/order/entities/order.entity';
+import { OrderItem } from 'src/order/entities/order-item.entity';
 
 export const databaseProviders = [
   {
@@ -30,6 +32,8 @@ export const databaseProviders = [
         Carousel,
         Cart,
         Wishlist,
+        Order,
+        OrderItem,
       ]);
 
       await sequelize.sync();

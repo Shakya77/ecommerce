@@ -6,6 +6,7 @@ import { useState } from "react";
 import { QuantityInput } from "@/components/QuantityInput";
 import WishlistButton from "@/components/WishlistButton";
 import DeleteButton from "@/components/DeleteButton";
+import { toImageUrl } from "@/lib/image";
 
 export default function CartCard({ data }) {
   const [checked, setChecked] = useState(false);
@@ -25,13 +26,13 @@ export default function CartCard({ data }) {
           </div>
           <div className="relative w-20 h-20 md:w-28 md:h-28 shrink-0 bg-linear-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden">
             <img
-              src=""
-              alt=""
+              src={toImageUrl(data.getProduct.medias[0]?.path)}
+              alt={data.getProduct.name}
               className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
             />
           </div>
 
-          <div className="flex-1 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex-1 flex flex-col md:flex-row  md:justify-between gap-3 ">
             <div className="space-y-1">
               <h3 className="text-base font-semibold line-clamp-1 w-96">
                 {data.getProduct?.name}
@@ -41,14 +42,10 @@ export default function CartCard({ data }) {
                   .map((pc) => pc.category.name)
                   .join(", ")}
               </p>
-            </div>
 
-            <div className="flex flex-col items-end gap-3">
-              <div className="text-right">
-                <p className="text-xl font-bold text-gray-900">
-                  Rs. {data.getProduct.price}
-                </p>
-              </div>
+              <p className="text-xl font-bold text-gray-900">
+                Rs. {data.getProduct.price}
+              </p>
             </div>
 
             <div className="">
