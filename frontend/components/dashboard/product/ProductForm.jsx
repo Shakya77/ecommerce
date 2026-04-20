@@ -87,7 +87,7 @@ export default function ProductForm({ mode = "create", productId = null }) {
         await api.patch(`/product/${productId}`, formData);
         toast.success("Product updated successfully");
       } else {
-        await postProduct(formData);
+        await api.post("/product", formData);
         toast.success("Product created successfully");
       }
 

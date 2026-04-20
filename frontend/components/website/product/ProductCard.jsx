@@ -1,30 +1,67 @@
 "use client";
 
-import { Heart, ShoppingCart, Check } from "lucide-react";
+import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
+import AddToCartButton from "@/components/website/product/AddToCartButton";
+import { onAddToCart as addToCartRequest } from "@/services/website.http";
 
 export default function ProductCard({
+  id,
   image,
   slug,
   title,
   price,
-  onAddToCart,
+  onAddToCart: onAddToCartProp,
   onAddToWishlist,
-  props,
 }) {
   const { isAuthenticated, loading } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [authPromptAction, setAuthPromptAction] = useState(null);
 
   const requiresAuth = !loading && !isAuthenticated;
 
-  const handleAddToCart = () => {};
+  const handleAddToCart = async () => {
+    if (requiresAuth) {
+      setAuthPromptAction("cart");
+      return;
+    }
 
-  const handleAddToWishlist = (event) => {};
+    if (!id) {
+      return;
+    }
+
+    setIsAddingToCart(true);
+
+    const addToCart = addToCartRequest;
+    const response = await addToCart(id, 1);
+
+    setIsAddingToCart(false);
+
+    if (!response) {
+      return;
+    }
+
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
+
+  const handleAddToWishlist = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (requiresAuth) {
+      setAuthPromptAction("wishlist");
+      return;
+    }
+
+    onAddToWishlist?.(id);
+    setIsWishlisted((prev) => !prev);
+  };
 
   return (
     <div className="group w-full max-w-sm overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-xl">
@@ -65,29 +102,16 @@ export default function ProductCard({
             <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
           </button>
 
-          <button
-            type="button"
+          <AddToCartButton
             onClick={handleAddToCart}
-            className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-sm font-medium transition-all duration-300
-              ${
-                isAdded
-                  ? "bg-green-500 text-white"
-                  : "bg-black text-white hover:bg-gray-800"
-              }`}
-            aria-label="Add to cart"
-          >
-            {isAdded ? (
-              <>
-                <Check size={18} />
-                Added
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={18} />
-                Add to Cart
-              </>
-            )}
-          </button>
+            isLoading={isAddingToCart}
+            isAdded={isAdded}
+            className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-sm font-medium transition-all duration-300 ${
+              isAdded
+                ? "bg-green-500 text-white"
+                : "bg-black text-white hover:bg-gray-800"
+            }`}
+          />
         </div>
       </div>
 

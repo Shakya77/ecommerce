@@ -61,4 +61,10 @@ export class OrderItem extends Model<OrderItem> {
     allowNull: false,
   })
   price: number;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  isActive: boolean;
 }

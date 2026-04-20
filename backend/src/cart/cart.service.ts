@@ -75,7 +75,7 @@ export class CartService {
       where: { id },
     });
 
-    return data;
+    return { message: 'Cart updated successfully' };
   }
 
   async findAll(user: { id: number }) {
@@ -108,10 +108,20 @@ export class CartService {
           ],
         },
       ],
+      order: [['createdAt', 'DESC']],
     });
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} cart`;
+    await this.cartRepository.update(
+      {
+        isActive: false,
+      },
+      {
+        where: { id },
+      },
+    );
+
+    return { message: 'Cart removed successfully' };
   }
 }

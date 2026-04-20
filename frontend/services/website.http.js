@@ -60,3 +60,25 @@ export const getCartItems = async () => {
     return null;
   }
 };
+
+export const onUpdateCartItemQuantity = async (cartItemId, quantity) => {
+  try {
+    const data = await api.patch(`/cart/${cartItemId}`, { quantity });
+
+    return data;
+  } catch (error) {
+    console.error("Error updating cart item quantity:", error);
+    return null;
+  }
+};
+
+export const onRemoveCartItem = async (cartItemId) => {
+  try {
+    const data = await api.delete(`/cart/${cartItemId}`);
+
+    return data;
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    return null;
+  }
+};

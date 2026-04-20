@@ -1,37 +1,74 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function DeleteButton({
-  isDeleting: controlledDeleting,
+  isDeleting = false,
   onDelete,
   confirm = false,
   size = "icon",
   className = "",
 }) {
-  const [internalDeleting, setInternalDeleting] = useState(false);
-
-  const isDeleting =
-    controlledDeleting !== undefined ? controlledDeleting : internalDeleting;
-
   const handleDelete = async () => {
-    if (confirm) {
-      const ok = window.confirm("Are you sure you want to delete?");
-      if (!ok) return;
-    }
-
-    try {
-      if (controlledDeleting === undefined) {
-        setInternalDeleting(true);
-      }
-
-      await onDelete?.();
-    } finally {
-      if (controlledDeleting === undefined) {
-        setInternalDeleting(false);
-      }
-    }
+    await onDelete?.();
   };
+
+  const triggerButton = (
+    <Button
+      variant="ghost"
+      size={size}
+      disabled={isDeleting}
+      className={`hover:bg-red-50 hover:text-red-600 transition-all duration-300 h-12 w-12 ${className}`}
+    >
+      {isDeleting ? (
+        <span className="text-xs">...</span>
+      ) : (
+        <Trash2 className="w-4 h-4" />
+      )}
+    </Button>
+  );
+
+  if (confirm) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete this item?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. The product will be removed from
+              your cart.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" disabled={isDeleting}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <DialogClose asChild>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Button
@@ -42,7 +79,7 @@ export default function DeleteButton({
       className={`hover:bg-red-50 hover:text-red-600 transition-all duration-300 h-12 w-12 ${className}`}
     >
       {isDeleting ? (
-        <span className="text-xs">...</span> // or spinner
+        <span className="text-xs">...</span>
       ) : (
         <Trash2 className="w-4 h-4" />
       )}

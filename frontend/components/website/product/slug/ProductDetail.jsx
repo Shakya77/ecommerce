@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart } from "lucide-react";
 import { fetcher } from "@/constants";
 import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import { onAddToCart } from "@/services/website.http";
+import AddToCartButton from "@/components/website/product/AddToCartButton";
 import { toast } from "sonner";
 import {
   Breadcrumb,
@@ -83,9 +82,11 @@ export default function ProductDetail({ slug }) {
       return;
     }
 
+    setIsAddingToCart(true);
+
     const { data } = await onAddToCart(product.id, quantity);
     toast.success(data?.message);
-    setIsAddingToCart(true);
+
     setTimeout(() => {
       setQuantity(1);
       setIsAddingToCart(false);
@@ -211,14 +212,14 @@ export default function ProductDetail({ slug }) {
             <QuantityInput value={quantity} onChange={setQuantity} />
 
             <div className="flex gap-3">
-              <Button
-                onClick={() => handleAddToCart(product.id)}
-                disabled={isAddingToCart}
-                className="flex-1 h-12 bg-black text-white"
-              >
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                {isAddingToCart ? "Adding..." : "Add to Cart"}
-              </Button>
+              <AddToCartButton
+                onClick={handleAddToCart}
+                isLoading={isAddingToCart}
+                className="flex h-12 flex-1 items-center justify-center gap-2 bg-black text-white"
+                iconClassName="mr-2 h-5 w-5"
+                iconSize={20}
+                addedText="Added"
+              />
 
               <WishlistButton
                 isWishlisted={isWishlisted}

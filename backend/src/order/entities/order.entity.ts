@@ -46,6 +46,12 @@ export class Order extends Model<Order> {
   })
   status: string;
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  isActive: boolean;
+
   @HasMany(() => OrderItem)
   orderItems: OrderItem[];
 }

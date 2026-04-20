@@ -10,15 +10,14 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import CartLayout from "@/components/website/cart/CartLayout";
-import CartSummary from "@/components/website/cart/CartSummary";
 import { fetcher } from "@/constants";
 import Link from "next/link";
 import useSWR from "swr";
 
-export default function page() {
+export default function Page() {
   const query = `/cart`;
 
-  const { data, isLoading, error } = useSWR(query, fetcher);
+  const { data, isLoading, error, mutate } = useSWR(query, fetcher);
 
   return (
     <>
@@ -41,13 +40,12 @@ export default function page() {
         <p className="text-sm text-gray-600">View your cart and checkout</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="col-span-3">
-          <CartLayout data={data} />
-        </div>
-
-        <CartSummary />
-      </div>
+      <CartLayout
+        data={data}
+        isLoading={isLoading}
+        error={error}
+        onRefresh={mutate}
+      />
     </>
   );
 }

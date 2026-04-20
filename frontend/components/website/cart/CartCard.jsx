@@ -8,9 +8,14 @@ import WishlistButton from "@/components/WishlistButton";
 import DeleteButton from "@/components/DeleteButton";
 import { toImageUrl } from "@/lib/image";
 
-export default function CartCard({ data }) {
-  const [checked, setChecked] = useState(false);
-  const [quantity, setQuantity] = useState(data?.quantity);
+export default function CartCard({
+  data,
+  checked,
+  onCheckedChange,
+  quantity,
+  onQuantityChange,
+  onDelete,
+}) {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   return (
@@ -20,7 +25,7 @@ export default function CartCard({ data }) {
           <div className="flex justify-center items-center">
             <Checkbox
               checked={checked}
-              onCheckedChange={setChecked}
+              onCheckedChange={(value) => onCheckedChange?.(Boolean(value))}
               className="w-5 h-5"
             />
           </div>
@@ -49,9 +54,9 @@ export default function CartCard({ data }) {
             </div>
 
             <div className="">
-              <QuantityInput value={quantity} onChange={setQuantity} />
+              <QuantityInput value={quantity} onChange={onQuantityChange} />
               <div className="flex gap-2 justify-end mt-3">
-                <DeleteButton />
+                <DeleteButton onDelete={onDelete} confirm />
 
                 <WishlistButton
                   isWishlisted={isWishlisted}
