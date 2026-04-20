@@ -10,11 +10,7 @@ import { toImageUrl } from "@/lib/image";
 import Loader from "@/components/Loader";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
-import {
-  onAddToCart,
-  onAddToWishlist,
-  onRemoveFromWishlist,
-} from "@/services/website.http";
+import { onAddToCart } from "@/services/website.http";
 import { toast } from "sonner";
 import {
   Breadcrumb,
@@ -27,6 +23,7 @@ import {
 import Link from "next/link";
 import { QuantityInput } from "@/components/QuantityInput";
 import WishlistButton from "@/components/WishlistButton";
+import DOMPurify from "dompurify";
 
 export default function ProductDetail({ slug }) {
   const {
@@ -94,6 +91,8 @@ export default function ProductDetail({ slug }) {
       setIsAddingToCart(false);
     }, 500);
   };
+
+  const descripion = DOMPurify.sanitize(product.description);
 
   return (
     <>
@@ -185,13 +184,13 @@ export default function ProductDetail({ slug }) {
                 {showFullDescription ? (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: product.description,
+                      __html: descripion,
                     }}
                   />
                 ) : (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: product.description.slice(0, 1050) + "...",
+                      __html: descripion.slice(0, 1050) + "...",
                     }}
                   />
                 )}
