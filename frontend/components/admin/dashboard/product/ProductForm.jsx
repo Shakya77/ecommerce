@@ -1,7 +1,7 @@
 "use client";
 
-import ComboBoxPopupComponent from "@/components/dashboard/product/ComboBoxPopupComponent";
-import ProductImageManager from "@/components/dashboard/product/ProductImageManager";
+import ComboBoxPopupComponent from "@/components/admin/dashboard/product/ComboBoxPopupComponent";
+import ProductImageManager from "@/components/admin/dashboard/product/ProductImageManager";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,7 +13,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import JoditEditor from "jodit-react";
 import { ArrowLeftIcon } from "lucide-react";
-import { postProduct } from "@/services/dashboard.http";
 
 export default function ProductForm({ mode = "create", productId = null }) {
   const router = useRouter();

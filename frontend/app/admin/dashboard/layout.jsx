@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/app/loading";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -18,7 +19,6 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Loading from "../loading";
 
 export default function layout({ children }) {
   const router = useRouter();
@@ -29,6 +29,10 @@ export default function layout({ children }) {
     if (loading) return;
     if (!user) {
       router.replace("/login");
+      return;
+    }
+    if (user.role !== "admin") {
+      router.replace("/");
       return;
     }
     setIsLoading(false);

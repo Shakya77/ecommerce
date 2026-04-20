@@ -26,7 +26,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/admin/dashboard",
       icon: LayoutDashboard,
     },
   ],
@@ -43,7 +43,7 @@ const data = {
         },
         {
           title: "Carousel",
-          url: "/dashboard/carousel",
+          url: "/admin/dashboard/carousel",
         },
       ],
     },
@@ -55,11 +55,11 @@ const data = {
       items: [
         {
           title: "View All",
-          url: "/dashboard/product",
+          url: "/admin/dashboard/product",
         },
         {
           title: "Create",
-          url: "/dashboard/product/create",
+          url: "/admin/dashboard/product/create",
         },
       ],
     },
