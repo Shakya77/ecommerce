@@ -225,7 +225,9 @@ export default function Page() {
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild onClick={() => setOpen(true)}>
-          <Button variant="outline">Create Category</Button>
+          <Button variant="outline" className="w-fit">
+            Create Category
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-5xl">
           <form onSubmit={handleSubmit(onSubmit)}>

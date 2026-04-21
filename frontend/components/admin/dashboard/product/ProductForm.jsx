@@ -98,7 +98,7 @@ export default function ProductForm({ mode = "create", productId = null }) {
         setExistingImages([]);
         setNewFiles([]);
       } else {
-        router.push("/dashboard/product");
+        router.push("/admin/dashboard/product");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to save product");

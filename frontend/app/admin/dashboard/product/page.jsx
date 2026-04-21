@@ -42,6 +42,7 @@ export default function Page() {
     {
       accessorKey: "name",
       header: "Name",
+      cell: ({ row }) => row.original.name.slice(0, 50) + "...",
     },
     {
       accessorKey: "price",
@@ -49,12 +50,9 @@ export default function Page() {
       cell: ({ row }) => `Rs.${Number(row.original.price).toLocaleString()}`,
     },
     {
-      accessorKey: "categories",
-      header: "Categories",
-      cell: ({ row }) =>
-        (row.original.categories || [])
-          .map((category) => category.name)
-          .join(", "),
+      accessorKey: "Status",
+      header: "Status",
+      cell: ({ row }) => (row.original.isActive ? "Active" : "Inactive"),
     },
     {
       id: "actions",

@@ -40,7 +40,6 @@ import {
 
 const topLinks = [
   { label: "Home", href: "/" },
-  { label: "Category", href: "/category" },
   { label: "Products", href: "/products" },
 ];
 
@@ -181,10 +180,23 @@ export function NavigationBar({ onOpenAuthModal }) {
                 {/* Menu */}
                 <DropdownMenuContent align="end" className="w-40">
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                      <User className="size-4" />
-                      Dashboard
-                    </Link>
+                    {user.role === "admin" ? (
+                      <Link
+                        href="/admin/dashboard"
+                        className="flex items-center gap-2"
+                      >
+                        <User className="size-4" />
+                        Admin Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2"
+                      >
+                        <User className="size-4" />
+                        Dashboard
+                      </Link>
+                    )}
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />

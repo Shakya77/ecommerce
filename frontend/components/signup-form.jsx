@@ -96,6 +96,11 @@ export function SignupForm({
     onOpenChange?.(false);
     resetLogin();
     resetSignup();
+
+    if (user.role === "admin") {
+      redirectTo = "/admin/dashboard";
+    }
+
     if (redirectTo) {
       router.push(redirectTo);
     }
@@ -106,6 +111,7 @@ export function SignupForm({
       const response = await api.post("/auth/login", data);
       login(response.data.access_token);
       toast.success("Logged in successfully.");
+
       handleAuthSuccess();
     } catch (error) {
       const message = error?.response?.data?.message;

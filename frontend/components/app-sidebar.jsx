@@ -39,7 +39,7 @@ const data = {
       items: [
         {
           title: "Category",
-          url: "/dashboard/category",
+          url: "/admin/dashboard/category",
         },
         {
           title: "Carousel",

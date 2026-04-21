@@ -17,13 +17,31 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 export default function layout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading } = useAuth();
   const [isloading, setIsLoading] = useState(true);
+
+  const breadcrumbItems = useMemo(() => {
+    const segments = pathname?.split("/").filter(Boolean) ?? [];
+
+    return segments.map((segment, index) => {
+      const href = `/${segments.slice(0, index + 1).join("/")}`;
+      const label = decodeURIComponent(segment)
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+
+      return {
+        href,
+        label,
+        isLast: index === segments.length - 1,
+      };
+    });
+  }, [pathname]);
 
   useEffect(() => {
     if (loading) return;
@@ -53,15 +71,20 @@ export default function layout({ children }) {
             />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Build Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbItems.map((item) => (
+                  <Fragment key={item.href}>
+                    <BreadcrumbItem>
+                      {item.isLast ? (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={item.href}>
+                          {item.label}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {!item.isLast && <BreadcrumbSeparator />}
+                  </Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
