@@ -82,3 +82,8 @@ export const onRemoveCartItem = async (cartItemId) => {
     return null;
   }
 };
+
+export const getCategories = async () => {
+  const query = `/categories`;
+  return fetcher(query);
+};
