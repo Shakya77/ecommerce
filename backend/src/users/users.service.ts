@@ -115,7 +115,13 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const data = await this.usersRepository.update(updateUserDto, {
+    const payload = { ...updateUserDto };
+
+    if (payload.password) {
+      payload.password = await bcrypt.hash(payload.password, 10);
+    }
+
+    await this.usersRepository.update(payload, {
       where: { id },
     });
 

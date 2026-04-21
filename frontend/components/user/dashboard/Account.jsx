@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
 import formatDate from "@/lib/date";
 import { cn } from "@/lib/utils";
@@ -16,22 +17,12 @@ import { CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const DEFAULT_PROFILE = {
-  firstName: "Random",
-  lastName: "User",
-  email: "random@example.com",
-  phone: "98420",
-  dateOfBirth: "2000-12-12",
-};
-
 export default function Account({ data, mutate }) {
   const [mode, setMode] = useState("view");
-  const [profile, setProfile] = useState(DEFAULT_PROFILE);
+  const [profile, setProfile] = useState([]);
 
   useEffect(() => {
-    if (data) {
-      setProfile(data);
-    }
+    setProfile(data);
   }, [data]);
 
   return (
@@ -43,10 +34,16 @@ export default function Account({ data, mutate }) {
         </p>
       </div>
 
-      {mode === "view" ? (
-        <ViewMode profile={profile} setMode={setMode} />
-      ) : (
+      {mode === "view" && <ViewMode profile={profile} setMode={setMode} />}
+      {mode === "edit" && (
         <EditMode profile={profile} mutate={mutate} setMode={setMode} />
+      )}
+      {mode === "password" && (
+        <ChangePasswordMode
+          profile={profile}
+          mutate={mutate}
+          setMode={setMode}
+        />
       )}
     </div>
   );
@@ -82,13 +79,18 @@ function ViewMode({ profile, setMode }) {
         <Button className="w-fit" onClick={() => setMode("edit")}>
           Edit Profile
         </Button>
-        <Button className="w-fit" onClick={() => setMode("edit")}>
+        <Button
+          className="w-fit"
+          variant="outline"
+          onClick={() => setMode("password")}
+        >
           Change Password
         </Button>
       </div>
     </div>
   );
 }
+
 function EditMode({ profile, mutate, setMode }) {
   const [formData, setFormData] = useState(profile);
   const [error, setError] = useState("");
@@ -207,6 +209,104 @@ function EditMode({ profile, mutate, setMode }) {
 
       <div className="mt-5 flex gap-3">
         <Button type="submit">Save Changes</Button>
+        <Button type="button" variant="outline" onClick={handleCancel}>
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function ChangePasswordMode({ profile, mutate, setMode }) {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCancel = () => {
+    setPassword("");
+    setConfirmPassword("");
+    setError("");
+    setMode("view");
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!password || !confirmPassword) {
+      setError("Password and Confirm Password are required");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Password and Confirm Password do not match");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const response = await api.patch(`/users/${profile.id}`, { password });
+      toast.success(response.data?.message || "Password updated successfully");
+      setPassword("");
+      setConfirmPassword("");
+      setError("");
+      mutate();
+      setMode("view");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update password");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <p className="text-sm text-muted-foreground">
+        Create a new password for your account.
+      </p>
+
+      <Separator className="my-5" />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium" htmlFor="password">
+            Password
+          </label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter new password"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium" htmlFor="confirmPassword">
+            Confirm Password
+          </label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+            placeholder="Confirm new password"
+          />
+        </div>
+      </div>
+
+      {error && <p className="text-sm text-red-500 mt-3">{error}</p>}
+
+      <div className="mt-5 flex gap-3">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Updating..." : "Update Password"}
+        </Button>
         <Button type="button" variant="outline" onClick={handleCancel}>
           Cancel
         </Button>

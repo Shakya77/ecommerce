@@ -4,10 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Account from "@/components/user/dashboard/Account";
 import { fetcher } from "@/constants";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 
 export default function page() {
+  const router = useRouter();
+
   const {
     data: profile,
     error,
@@ -15,9 +19,15 @@ export default function page() {
     mutate,
   } = useSWR("/users/profile", fetcher);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     document.title = "Dashboard - My Account";
-  }, []);
+
+    if (!user) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <Tabs defaultValue="account" orientation="vertical" className="flex gap-6">
