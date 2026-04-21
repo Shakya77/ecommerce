@@ -1,11 +1,18 @@
-import { SignupForm } from "@/components/signup-form"
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SignupForm } from "@/components/signup-form";
 
 export default function Page() {
-  return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <SignupForm />
-      </div>
-    </div>
-  );
+  const router = useRouter();
+  const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    if (!open) {
+      router.replace("/");
+    }
+  }, [open, router]);
+
+  return <SignupForm open={open} onOpenChange={setOpen} defaultTab="signup" />;
 }

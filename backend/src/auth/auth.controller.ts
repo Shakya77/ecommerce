@@ -10,6 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateAuthDto } from './dto/create-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRole } from './decorators/user-role.decorator';
 import { AllowedRoles } from './decorators/roles.decorator';
@@ -26,7 +27,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() loginDto: CreateUserDto) {
+  async login(@Body() loginDto: CreateAuthDto) {
     return this.authService.login(loginDto);
   }
 

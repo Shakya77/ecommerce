@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/Loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Account from "@/components/user/dashboard/Account";
@@ -28,6 +29,8 @@ export default function page() {
       router.push("/");
     }
   }, [user]);
+
+  if (isLoading) return <Loader />;
 
   return (
     <Tabs defaultValue="account" orientation="vertical" className="flex gap-6">

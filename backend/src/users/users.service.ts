@@ -15,17 +15,31 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const userSlug = await slugify(createUserDto.name);
+    const normalizedEmail = createUserDto.email.trim().toLowerCase();
+    const normalizedNumber = createUserDto.number?.trim();
+    const userSlug = `${slugify(createUserDto.name, {
+      lower: true,
+      strict: true,
+      trim: true,
+    })}-${Date.now().toString(36)}`;
+
+    const duplicateConditions: Array<Record<string, string>> = [
+      { email: normalizedEmail },
+    ];
+
+    if (normalizedNumber) {
+      duplicateConditions.push({ number: normalizedNumber });
+    }
 
     const existingUser = await this.usersRepository.findOne({
       where: {
-        [Op.or]: [{ email: createUserDto.email }, { slug: userSlug }],
+        [Op.or]: duplicateConditions,
       },
     });
 
     if (existingUser) {
       throw new BadRequestException(
-        'User already exists with this name or email',
+        'User already exists with this email or phone number',
       );
     }
 
@@ -33,8 +47,13 @@ export class UsersService {
 
     const userData: Partial<User> = {
       ...createUserDto,
+      email: normalizedEmail,
       slug: userSlug,
       password: hashedPassword,
+      role: Roles.CUSTOMER,
+      isActive: true,
+      number: normalizedNumber,
+      dob: createUserDto.dob ? new Date(createUserDto.dob) : undefined,
     };
 
     const user = await this.usersRepository.create(userData as any as User);
@@ -110,12 +129,17 @@ export class UsersService {
 
   async findOneEmail(email: string) {
     return await this.usersRepository.findOne({
-      where: { email },
+      where: { email: email.trim().toLowerCase() },
     });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const payload = { ...updateUserDto };
+    const payload = {
+      ...updateUserDto,
+      email: updateUserDto.email?.trim().toLowerCase(),
+      number: updateUserDto.number?.trim(),
+      dob: updateUserDto.dob ? new Date(updateUserDto.dob) : undefined,
+    };
 
     if (payload.password) {
       payload.password = await bcrypt.hash(payload.password, 10);

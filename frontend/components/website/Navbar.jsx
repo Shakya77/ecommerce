@@ -98,9 +98,13 @@ function MobileLink({ href, label, pathname, onClick }) {
   );
 }
 
-export function NavigationBar() {
+export function NavigationBar({ onOpenAuthModal }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  const openAuthModal = (tab) => {
+    onOpenAuthModal?.(tab);
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-xl supports-backdrop-filter:bg-background/70">
@@ -197,23 +201,19 @@ export function NavigationBar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Button
-                  asChild
                   variant="ghost"
                   className="rounded-full px-4 text-muted-foreground hover:text-foreground"
+                  onClick={() => openAuthModal("login")}
                 >
-                  <Link href="/login">
-                    <UserRound className="size-4" />
-                    Sign in
-                  </Link>
+                  <UserRound className="size-4" />
+                  Sign in
                 </Button>
                 <Button
-                  asChild
                   className="rounded-full px-4 shadow-lg shadow-slate-900/10"
+                  onClick={() => openAuthModal("signup")}
                 >
-                  <Link href="/signup">
-                    Get started
-                    <ArrowRight className="size-4" />
-                  </Link>
+                  Get started
+                  <ArrowRight className="size-4" />
                 </Button>
               </div>
             )}
@@ -221,15 +221,13 @@ export function NavigationBar() {
 
           <div className="flex items-center gap-2 lg:hidden">
             <Button
-              asChild
               variant="ghost"
               size="icon-sm"
               className="text-muted-foreground hover:text-foreground"
+              onClick={() => openAuthModal("login")}
             >
-              <Link href="/login">
-                <UserRound className="size-4" />
-                <span className="sr-only">Sign in</span>
-              </Link>
+              <UserRound className="size-4" />
+              <span className="sr-only">Sign in</span>
             </Button>
 
             <Sheet>
