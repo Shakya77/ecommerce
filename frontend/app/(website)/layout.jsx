@@ -5,9 +5,9 @@ export default function layout({ children }) {
   return (
     <>
       <NavigationBar />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-360 px-4 sm:px-6 lg:px-8 py-8">
         <WebsiteBreadcrumb />
-        {children}
+        <main className="mt-6">{children}</main>
       </div>
     </>
   );

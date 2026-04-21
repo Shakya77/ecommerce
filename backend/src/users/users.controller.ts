@@ -17,6 +17,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { AllowedRoles } from 'src/auth/decorators/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from './entities/user.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -64,8 +65,7 @@ export class UsersController {
     );
   }
 
-  @AllowedRoles(Roles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(+id, updateUserDto);
@@ -81,5 +81,11 @@ export class UsersController {
   @Get('/customer')
   async getCustomer() {
     return await this.usersService.findCustomer();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/profile')
+  async getProfile(@Request() req) {
+    return await this.usersService.getProfile(req.user.id);
   }
 }

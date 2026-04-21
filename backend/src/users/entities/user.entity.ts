@@ -6,6 +6,12 @@ export enum Roles {
   CUSTOMER = 'customer',
 }
 
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+}
+
 @Table({
   tableName: 'users',
   paranoid: true,
@@ -35,6 +41,12 @@ export class User extends Model<User> {
   })
   email: string;
 
+  @Column({
+    type: DataType.ENUM(...Object.values(Gender)),
+    unique: true,
+  })
+  gender: string;
+
   @Exclude()
   @Column({
     type: DataType.STRING,
@@ -55,4 +67,17 @@ export class User extends Model<User> {
     allowNull: false,
   })
   isActive: boolean;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  dob: Date;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+  })
+  number: string;
 }

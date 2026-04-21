@@ -119,7 +119,7 @@ export class UsersService {
       where: { id },
     });
 
-    return data;
+    return { message: 'User updated successfully' };
   }
 
   async remove(id: number) {
@@ -148,5 +148,18 @@ export class UsersService {
     });
 
     return customers;
+  }
+
+  async getProfile(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id, role: Roles.CUSTOMER },
+      attributes: ['id', 'name', 'email', 'role', 'isActive', 'number', 'dob'],
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user;
   }
 }

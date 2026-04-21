@@ -42,7 +42,6 @@ const topLinks = [
   { label: "Home", href: "/" },
   { label: "Category", href: "/category" },
   { label: "Products", href: "/products" },
-  { label: "Sale", href: "/#deals" },
 ];
 
 function isActive(pathname, href) {

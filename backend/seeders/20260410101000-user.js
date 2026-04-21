@@ -26,6 +26,8 @@ module.exports = {
         email: 'user@gmail.com',
         password: passwordHash,
         role: 'customer',
+        number: '9842092535',
+        dob: '2000-12-12',
         isActive: true,
         createdAt: now,
         updatedAt: now,
@@ -35,6 +37,8 @@ module.exports = {
         slug: 'demo-user-2',
         email: 'user2@gmail.com',
         password: passwordHash,
+        number: '9842092545',
+        dob: '2000-12-12',
         role: 'customer',
         isActive: true,
         createdAt: now,
@@ -50,7 +54,11 @@ module.exports = {
       'users',
       {
         email: {
-          [Sequelize.Op.in]: ['admin@gmail.com', 'user@gmail.com'],
+          [Sequelize.Op.in]: [
+            'admin@gmail.com',
+            'user@gmail.com',
+            'user2@gmail.com',
+          ],
         },
       },
       {},
