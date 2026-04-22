@@ -4,6 +4,7 @@ import Loader from "@/components/Loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Account from "@/components/user/dashboard/Account";
+import Address from "@/components/user/dashboard/Address";
 import { fetcher } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -49,6 +50,13 @@ export default function page() {
       <TabsContent value="orders">
         <Card className="rounded-sm">
           <CardContent>hello 2</CardContent>
+        </Card>
+      </TabsContent>
+      <TabsContent value="address">
+        <Card className="rounded-sm">
+          <CardContent>
+            <Address />
+          </CardContent>
         </Card>
       </TabsContent>
     </Tabs>

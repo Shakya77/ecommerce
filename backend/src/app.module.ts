@@ -12,6 +12,7 @@ import { ProductModule } from './product/product.module';
 import { UploadModule } from './upload/upload.module';
 import { CarouselModule } from './carousel/carousel.module';
 import { WishlistModule } from './wishlist/wishlist.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
     UploadModule,
     CarouselModule,
     WishlistModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [AppService],
