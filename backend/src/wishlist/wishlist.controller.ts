@@ -24,33 +24,33 @@ export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
   @Post()
-  create(
+  async create(
     @Body() createWishlistDto: CreateWishlistDto,
     @Request() request: any,
   ) {
-    return this.wishlistService.create(createWishlistDto, request.user);
+    return await this.wishlistService.create(createWishlistDto, request.user);
   }
 
   @Get()
-  findAll(@Request() request: any) {
-    return this.wishlistService.findAll(request.user);
+  async findAll(@Request() request: any) {
+    return await this.wishlistService.findAll(request.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() request: any) {
-    return this.wishlistService.findOne(+id, request.user);
+  async findOne(@Param('id') id: string, @Request() request: any) {
+    return await this.wishlistService.findOne(+id, request.user);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateWishlistDto: UpdateWishlistDto,
   ) {
-    return this.wishlistService.update(+id, updateWishlistDto);
+    return await this.wishlistService.update(+id, updateWishlistDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() request: any) {
-    return this.wishlistService.remove(+id, request.user);
+  async remove(@Param('id') id: string, @Request() request: any) {
+    return await this.wishlistService.remove(+id, request.user);
   }
 }

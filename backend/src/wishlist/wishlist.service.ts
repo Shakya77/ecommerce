@@ -27,7 +27,7 @@ export class WishlistService {
       userId: user.id,
     } as any as Wishlist);
 
-    return data;
+    return { message: 'Product added to wishlist successfully' };
   }
 
   async findAll(user: any) {

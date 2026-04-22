@@ -6,9 +6,11 @@ import {
   ORDER_REPOSITORY,
   ORDER_ITEM_REPOSITORY,
   PRODUCTS_REPOSITORY,
+  CARTS_REPOSITORY,
 } from '../../constants';
 import { OrderItem } from './entities/order-item.entity';
 import { Product } from 'src/product/entities/product.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 @Injectable()
 export class OrderService {
@@ -19,6 +21,8 @@ export class OrderService {
     private readonly orderItemRepository: typeof OrderItem,
     @Inject(PRODUCTS_REPOSITORY)
     private readonly productsRepository: typeof Product,
+    @Inject(CARTS_REPOSITORY)
+    private readonly cartRepository: typeof Cart,
   ) {}
 
   async create(createOrderDto: CreateOrderDto, user: { id: number }) {
@@ -59,13 +63,26 @@ export class OrderService {
           orderId: order.id,
           productId: product.id,
           quantity: item.quantity,
-          price: product.price, // ✅ from DB, not frontend
+          price: product.price,
         };
       });
 
       await this.orderItemRepository.bulkCreate(
         orderItemsData as any as OrderItem[],
         {
+          transaction,
+        },
+      );
+
+      const cartIds = items.map((item) => item.cartId);
+
+      await this.cartRepository.update(
+        { isActive: false },
+        {
+          where: {
+            id: cartIds,
+            userId: user.id,
+          },
           transaction,
         },
       );

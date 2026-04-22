@@ -15,7 +15,7 @@ export default function CartSummary({ data, onCheckout }) {
   }, 0);
 
   return (
-    <div className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4">
+    <div className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 max-h-fit">
       <h2 className="text-xl font-semibold ">Order Summary</h2>
       <p className="text-xs text-gray-500">Summary for checked products only</p>
 

@@ -36,6 +36,7 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
       cartItems
         .filter((item) => selectedIds.includes(item.id))
         .map((item) => ({
+          cartId: item.id,
           id: item.getProduct.id,
           price: item.price,
           quantity: item.quantity,
@@ -73,7 +74,7 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
 
     try {
       const response = await api.post("/order", { items: selectedItems });
-
+      await onRefresh?.();
       toast.success(response?.data?.message);
     } catch (error) {
       toast.error("Failed to checkout");

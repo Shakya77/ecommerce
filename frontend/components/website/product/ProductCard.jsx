@@ -6,17 +6,11 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import AddToCartButton from "@/components/website/product/AddToCartButton";
-import { onAddToCart as addToCartRequest } from "@/services/website.http";
+import { onAddToCart } from "@/services/website.http";
+import api from "@/lib/api";
+import { toast } from "sonner";
 
-export default function ProductCard({
-  id,
-  image,
-  slug,
-  title,
-  price,
-  onAddToCart: onAddToCartProp,
-  onAddToWishlist,
-}) {
+export default function ProductCard({ id, image, slug, title, price }) {
   const { isAuthenticated, loading } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
@@ -37,8 +31,7 @@ export default function ProductCard({
 
     setIsAddingToCart(true);
 
-    const addToCart = addToCartRequest;
-    const response = await addToCart(id, 1);
+    const response = await onAddToCart(id, 1);
 
     setIsAddingToCart(false);
 
@@ -50,17 +43,16 @@ export default function ProductCard({
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  const handleAddToWishlist = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (requiresAuth) {
-      setAuthPromptAction("wishlist");
-      return;
-    }
-
-    onAddToWishlist?.(id);
+  const handleAddToWishlist = async () => {
     setIsWishlisted((prev) => !prev);
+
+    try {
+      const { data } = await api.post("/wishlist", { productId: id });
+
+      toast.success(data.message);
+    } catch (error) {
+      toast.error("Failed to update wishlist");
+    }
   };
 
   return (
@@ -79,12 +71,12 @@ export default function ProductCard({
       <div className="flex flex-col justify-between gap-3 p-5">
         <div className="space-y-1">
           <Link href={`/products/${slug}`} className="block">
-            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-gray-900 transition-colors hover:text-black">
+            <h3 className="line-clamp-2 text-base font-semibold leading-snug text-gray-900 ">
               {title}
             </h3>
           </Link>
 
-          <p className="text-sm font-bold text-gray-900">Rs. {price}</p>
+          <p className="text-base font-bold text-gray-900">Rs. {price}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -107,9 +99,7 @@ export default function ProductCard({
             isLoading={isAddingToCart}
             isAdded={isAdded}
             className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-sm font-medium transition-all duration-300 ${
-              isAdded
-                ? "bg-green-500 text-white"
-                : "bg-black text-white hover:bg-gray-800"
+              isAdded ? "" : "bg-black text-white hover:bg-gray-800"
             }`}
           />
         </div>

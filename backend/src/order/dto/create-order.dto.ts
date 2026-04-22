@@ -6,6 +6,9 @@ class OrderItemDto {
   id: number;
 
   @IsNumber()
+  cartId: number;
+
+  @IsNumber()
   quantity: number;
 }
 
