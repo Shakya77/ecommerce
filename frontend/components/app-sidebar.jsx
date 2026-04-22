@@ -29,6 +29,11 @@ const data = {
       url: "/admin/dashboard",
       icon: LayoutDashboard,
     },
+    {
+      title: "Products",
+      url: "/admin/dashboard/product",
+      icon: LayoutDashboard,
+    },
   ],
   navSubMain: [
     {
@@ -48,41 +53,13 @@ const data = {
       ],
     },
     {
-      title: "Product",
-      url: "#",
-      icon: <TerminalSquareIcon />,
-      isActive: true,
-      items: [
-        {
-          title: "View All",
-          url: "/admin/dashboard/product",
-        },
-        {
-          title: "Create",
-          url: "/admin/dashboard/product/create",
-        },
-      ],
-    },
-    {
-      title: "Settings",
+      title: "Reports",
       url: "#",
       icon: <Settings2Icon />,
       items: [
         {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Orders",
+          url: "/admin/dashboard/orders",
         },
       ],
     },

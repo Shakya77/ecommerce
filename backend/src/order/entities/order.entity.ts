@@ -59,10 +59,16 @@ export class Order extends Model<Order> {
   @ForeignKey(() => Address)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
   addressId: number;
 
   @BelongsTo(() => Address)
   getAddress: Address;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  totalAmount: number;
 }

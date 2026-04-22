@@ -8,11 +8,15 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from 'src/users/entities/user.entity';
+import { AllowedRoles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('order')
@@ -24,9 +28,11 @@ export class OrderController {
     return await this.orderService.create(createOrderDto, req.user);
   }
 
+  @AllowedRoles(Roles.ADMIN)
+  @UseGuards(RolesGuard)
   @Get()
-  findAll(@Request() req) {
-    return this.orderService.findAll(req.user);
+  findAll() {
+    return this.orderService.findAll();
   }
 
   @Get(':id')

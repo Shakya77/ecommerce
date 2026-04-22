@@ -17,6 +17,10 @@ import { OrderItem } from './entities/order-item.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
+import { ProductHasCategory } from 'src/product/entities/product-has-category.entity';
+import { Category } from 'src/category/entities/category.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class OrderService {
@@ -84,18 +88,26 @@ export class OrderService {
         },
       );
 
-      const cartIds = items.map((item) => item.cartId);
+      const cartIds = items
+        .map((item) => Number(item?.cartId));
 
-      await this.cartRepository.update(
+      const [updatedCartCount] = await this.cartRepository.update(
         { isActive: false },
         {
           where: {
-            id: cartIds,
+            id: {
+              [Op.in]: cartIds,
+            },
             userId: user.id,
+            isActive: true,
           },
           transaction,
         },
       );
+
+      if (updatedCartCount === 0) {
+        throw new BadRequestException('No matching active cart items found');
+      }
 
       await transaction.commit();
 
@@ -109,12 +121,8 @@ export class OrderService {
     }
   }
 
-  async findAll(user: { id: number }) {
+  async findAll() {
     return await this.orderRepository.findAll({
-      where: {
-        userId: user.id,
-        isActive: true,
-      },
       include: [
         {
           model: OrderItem,
@@ -130,9 +138,26 @@ export class OrderService {
                   as: 'medias',
                   attributes: ['id', 'path', 'filename', 'type', 'size'],
                 },
+                {
+                  model: ProductHasCategory,
+                  as: 'productCategories',
+                  attributes: ['id', 'categoryId'],
+                  include: [
+                    {
+                      model: Category,
+                      as: 'category',
+                      attributes: ['id', 'name', 'slug'],
+                    },
+                  ],
+                },
               ],
             },
           ],
+        },
+        {
+          model: User,
+          as: 'getUser',
+          attributes: ['id', 'email', 'name'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -160,6 +185,18 @@ export class OrderService {
                   as: 'medias',
                   attributes: ['id', 'path', 'filename', 'type', 'size'],
                 },
+                {
+                  model: ProductHasCategory,
+                  as: 'productCategories',
+                  attributes: ['id', 'categoryId'],
+                  include: [
+                    {
+                      model: Category,
+                      as: 'category',
+                      attributes: ['id', 'name', 'slug'],
+                    },
+                  ],
+                },
               ],
             },
           ],
@@ -179,21 +216,55 @@ export class OrderService {
     updateOrderDto: UpdateOrderDto,
     user: { id: number },
   ) {
-    const [updatedCount] = await this.orderRepository.update(
-      updateOrderDto as any as Order,
-      {
-        where: {
-          id,
-          userId: user.id,
-        },
+    const order = await this.orderRepository.findOne({
+      where: {
+        id,
+        userId: user.id,
       },
-    );
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          attributes: ['quantity', 'price'],
+        },
+      ],
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    const payload = { ...updateOrderDto } as any;
+    const requestedStatus = String(payload?.status || '').toUpperCase();
+
+    if (requestedStatus === 'COMPLETED') {
+      const orderItems = Array.isArray(order.orderItems)
+        ? order.orderItems
+        : [];
+
+      if (orderItems.length === 0) {
+        throw new BadRequestException('Order has no items to confirm');
+      }
+
+      payload.totalAmount = orderItems.reduce((sum, item) => {
+        const quantity = Number(item?.quantity || 0);
+        const price = Number(item?.price || 0);
+        return sum + quantity * price;
+      }, 0);
+    }
+
+    const [updatedCount] = await this.orderRepository.update(payload as Order, {
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
 
     if (!updatedCount) {
       throw new NotFoundException('Order not found');
     }
 
-    return { message: 'Order updated successfully' };
+    return { message: 'Order updated successfully', orderId: order.id };
   }
 
   async remove(id: number, user: { id: number }) {

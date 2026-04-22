@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/empty";
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 
 export default function CartLayout({ data, isLoading, error, onRefresh }) {
   const router = useRouter();
@@ -74,14 +75,9 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
 
     try {
       setIsCheckingOut(true);
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem(
-          "checkout_items",
-          JSON.stringify(selectedItems),
-        );
-      }
 
-      router.push("/checkout");
+      const { data } = await api.post("/order", { items: selectedItems });
+      router.push("/order/" + data.orderId);
     } catch (error) {
       toast.error("Failed to proceed to checkout");
     } finally {

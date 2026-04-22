@@ -5,9 +5,10 @@ import { NavigationBar } from "@/components/website/Navbar";
 import WebsiteBreadcrumb from "@/components/website/WebsiteBreadcrumb";
 import { SignupForm } from "@/components/signup-form";
 import { useAuth } from "@/context/AuthContext";
+import Loader from "@/components/Loader";
 
 export default function layout({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState("login");
 
@@ -15,6 +16,8 @@ export default function layout({ children }) {
     setAuthModalTab(tab);
     setAuthModalOpen(true);
   };
+
+  if (loading) return <Loader />;
 
   return (
     <>

@@ -23,7 +23,7 @@ export default function page() {
     mutate,
   } = useSWR("/users/profile", fetcher);
 
-  const { user } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
 
   const defaultTab =
     searchParams.get("tab") === "orders" ? "orders" : "account";
@@ -31,7 +31,9 @@ export default function page() {
   useEffect(() => {
     document.title = "Dashboard - My Account";
 
-    if (!user) {
+    if (loading) return;
+
+    if (!isAuthenticated) {
       router.push("/");
     }
   }, [user]);

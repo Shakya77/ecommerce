@@ -92,8 +92,6 @@ export function DataTable({ columns, data, isLoading = false }) {
           </TableBody>
         </Table>
       </div>
-
-      <DataTablePagination table={table} />
     </div>
   );
 }

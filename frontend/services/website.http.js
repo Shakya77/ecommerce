@@ -63,7 +63,7 @@ export const getCartItems = async () => {
 
 export const getUserOrders = async () => {
   try {
-    const { data } = await api.get("/order");
+    const { data } = await api.get("/user/orders");
 
     return data;
   } catch (error) {
@@ -108,4 +108,15 @@ export const onRemoveCartItem = async (cartItemId) => {
 export const getCategories = async () => {
   const query = `/categories`;
   return fetcher(query);
+};
+
+export const getUserAddress = async () => {
+  try {
+    const { data } = await api.get("/address");
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching user address:", error);
+    return null;
+  }
 };

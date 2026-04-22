@@ -29,22 +29,6 @@ export default function Order() {
   const [toDate, setToDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const matchesStatus =
-        statusFilter === "ALL" ? true : order.status === statusFilter;
-
-      const orderDate = new Date(order.createdAt);
-      const from = fromDate ? new Date(`${fromDate}T00:00:00`) : null;
-      const to = toDate ? new Date(`${toDate}T23:59:59`) : null;
-
-      const matchesFromDate = from ? orderDate >= from : true;
-      const matchesToDate = to ? orderDate <= to : true;
-
-      return matchesStatus && matchesFromDate && matchesToDate;
-    });
-  }, [orders, statusFilter, fromDate, toDate]);
-
   const columns = useMemo(
     () => [
       {
@@ -120,11 +104,6 @@ export default function Order() {
       setIsLoading(true);
       const data = await getUserOrders();
 
-      if (!Array.isArray(data)) {
-        setOrders([]);
-        return;
-      }
-
       setOrders(data);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -147,52 +126,7 @@ export default function Order() {
         </p>
       </div>
 
-      <div className="grid gap-3 rounded-md border p-3 md:grid-cols-3">
-        <div className="space-y-1">
-          <p className="text-sm font-medium">Status</p>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
-              <SelectItem value="CANCELLED">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-sm font-medium">From Date</p>
-          <Input
-            type="date"
-            value={fromDate}
-            onChange={(event) => setFromDate(event.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-sm font-medium">To Date</p>
-          <Input
-            type="date"
-            value={toDate}
-            onChange={(event) => setToDate(event.target.value)}
-          />
-        </div>
-      </div>
-
-      {!isLoading && filteredOrders.length === 0 ? (
-        <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No orders match your current filters.
-        </div>
-      ) : null}
-
-      <DataTable
-        columns={columns}
-        data={filteredOrders}
-        isLoading={isLoading}
-      />
+      <DataTable columns={columns} data={orders} isLoading={isLoading} />
     </div>
   );
 }

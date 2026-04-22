@@ -4,7 +4,6 @@ import Loader from "@/components/Loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import api from "@/lib/api";
 import { toImageUrl } from "@/lib/image";
@@ -32,8 +31,6 @@ export default function page() {
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState("cod");
-  const [promoCode, setPromoCode] = useState("");
-  const [deliveryFee, setDeliveryFee] = useState(170);
 
   const hasCheckoutItems = checkoutItems.length > 0;
 
@@ -54,7 +51,7 @@ export default function page() {
 
   const finalTotal = useMemo(() => {
     return grandTotal + Number(deliveryFee || 0);
-  }, [grandTotal, deliveryFee]);
+  }, [grandTotal]);
 
   const selectedAddress = useMemo(() => {
     return (
@@ -176,7 +173,7 @@ export default function page() {
   }
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-4 py-8 lg:grid-cols-3">
+    <div className="grid gap-4 py-8 lg:grid-cols-3">
       <div className="space-y-4 lg:col-span-2">
         <Card>
           <CardHeader className="border-b pb-4">
@@ -195,25 +192,8 @@ export default function page() {
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="rounded-md border bg-muted/20 p-4">
-                  {selectedAddress ? (
-                    <>
-                      <div className="mb-2 flex items-center gap-2">
-                        <Badge variant="secondary">HOME</Badge>
-                        <span className="text-sm text-muted-foreground">
-                          Selected for delivery
-                        </span>
-                      </div>
-                      <p className="font-medium">{selectedAddress.address}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedAddress.city}, {selectedAddress.state}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      Select an address to continue.
-                    </p>
-                  )}
+                <div className="text-sm text-muted-foreground">
+                  * Select an address to continue.
                 </div>
 
                 <div className="grid gap-2">

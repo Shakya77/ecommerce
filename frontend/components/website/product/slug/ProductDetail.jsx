@@ -128,7 +128,7 @@ export default function ProductDetail({ slug }) {
         <div className="flex flex-col">
           {product.productCategories?.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
-              {product.productCategories.slice(0, 3).map((pc) => (
+              {product.productCategories.map((pc) => (
                 <Badge key={pc.id} variant="secondary">
                   {pc.category.name}
                 </Badge>

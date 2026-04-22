@@ -10,6 +10,6 @@ import { CartModule } from 'src/cart/cart.module';
   imports: [ProductModule, DatabaseModule, CartModule],
   controllers: [OrderController],
   providers: [OrderService, ...orderProviders, ...orderItemProviders],
-  exports: [OrderService],
+  exports: [OrderService, ...orderProviders, ...orderItemProviders],
 })
 export class OrderModule {}
