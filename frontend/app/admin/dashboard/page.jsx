@@ -15,16 +15,17 @@ import api from "@/lib/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import { toWords } from "to-words";
 
 export default function Page() {
-  const [totalAmount, setTotalAmount] = useState(null);
+  const [totalRevenue, setTotalRevenue] = useState(null);
   const [customerCount, setCustomerCount] = useState(null);
 
   const { data, isLoading } = useSWR("/product/report/sold", fetcher);
 
-  const getTotalAmount = async () => {
+  const getTotalRevenue = async () => {
     const { data } = await api.get("/order/report/totalRevenue");
-    setTotalAmount(data.totalRevenue);
+    setTotalRevenue(data.totalRevenue);
   };
 
   const getCustomerCount = async () => {
@@ -32,13 +33,18 @@ export default function Page() {
     setCustomerCount(data.count);
   };
 
+  const getTotalRevenueText = () => {
+    if (!totalRevenue) return "";
+    return toWords(totalRevenue);
+  };
+
   useEffect(() => {
-    getTotalAmount();
+    getTotalRevenue();
     getCustomerCount();
   }, []);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className=" space-y-6">
       {/* Stats Section */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
@@ -59,7 +65,10 @@ export default function Page() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Rs. {totalAmount ?? 0}</div>
+            <div className="text-2xl font-bold">Rs. {totalRevenue ?? 0}</div>
+            <div className="text-sm text-muted-foreground">
+              {getTotalRevenueText()}
+            </div>
           </CardContent>
         </Card>
 

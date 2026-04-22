@@ -37,11 +37,11 @@ export default function HomeCarousel() {
   if (loading) return <Loader />;
 
   return (
-    <Carousel className="w-full ">
+    <Carousel className="w-full">
       <CarouselContent>
         {carousels.map((slide) => (
           <CarouselItem key={slide.id}>
-            <div className="relative w-full h-100">
+            <div className="relative w-full h-64 md:h-fit">
               <img
                 src={slide.image}
                 alt={slide.title}

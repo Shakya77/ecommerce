@@ -21,6 +21,7 @@ import { ProductHasCategory } from 'src/product/entities/product-has-category.en
 import { Category } from 'src/category/entities/category.entity';
 import { Roles, User } from 'src/users/entities/user.entity';
 import { col, fn, Op } from 'sequelize';
+import { Address } from 'src/address/entities/address.entity';
 
 @Injectable()
 export class OrderService {
@@ -202,6 +203,16 @@ export class OrderService {
               ],
             },
           ],
+        },
+        {
+          model: User,
+          as: 'getUser',
+          attributes: ['id', 'email', 'name'],
+        },
+        {
+          model: Address,
+          as: 'getAddress',
+          attributes: ['id', 'address', 'city', 'state'],
         },
       ],
     });
