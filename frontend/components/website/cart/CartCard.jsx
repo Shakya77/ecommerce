@@ -57,12 +57,6 @@ export default function CartCard({
               <QuantityInput value={quantity} onChange={onQuantityChange} />
               <div className="flex gap-2 justify-end mt-3">
                 <DeleteButton onDelete={onDelete} confirm />
-
-                <WishlistButton
-                  isWishlisted={isWishlisted}
-                  onToggle={setIsWishlisted}
-                  variant="ghost"
-                />
               </div>
             </div>
           </div>

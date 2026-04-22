@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import useSWR from "swr";
 
 export default function page() {
-  const { data, error, isLoading } = useSWR("/wishlist", fetcher);
+  const { data, error, isLoading, mutate } = useSWR("/wishlist", fetcher);
 
   useEffect(() => {
     document.title = "Wishlist - E-commerce";
@@ -18,7 +18,7 @@ export default function page() {
   return (
     <>
       <h1 className="text-2xl font-bold mt-6">My Wishlist</h1>
-      <WishLists data={data} />
+      <WishLists data={data} mutate={mutate} />
     </>
   );
 }

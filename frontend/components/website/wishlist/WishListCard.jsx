@@ -4,9 +4,14 @@ import { Trash2, ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toImageUrl } from "@/lib/image";
-import { onAddToCart } from "@/services/website.http";
+import { onAddToCart, onRemoveFromWishlist } from "@/services/website.http";
 
-export default function WishListCard({ data }) {
+export default function WishListCard({ data, mutate }) {
+  const remove = async () => {
+    await onRemoveFromWishlist(data.id);
+    mutate();
+  };
+
   return (
     <Card>
       <CardContent>
@@ -50,6 +55,7 @@ export default function WishListCard({ data }) {
                   variant="ghost"
                   size="icon"
                   className="hover:bg-red-50 hover:text-red-600 transition-all duration-300"
+                  onClick={() => remove(data.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>

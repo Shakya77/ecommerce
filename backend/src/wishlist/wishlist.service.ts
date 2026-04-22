@@ -32,7 +32,7 @@ export class WishlistService {
 
   async findAll(user: any) {
     return await this.wishlistRepository.findAll({
-      where: { userId: user.id },
+      where: { userId: user.id, isActive: true },
       include: [
         {
           model: Product,
@@ -77,9 +77,12 @@ export class WishlistService {
   }
 
   async remove(id: number, user: any) {
-    const data = await this.wishlistRepository.destroy({
-      where: { productId: id, userId: user.id },
-    });
+    const data = await this.wishlistRepository.update(
+      { isActive: false },
+      {
+        where: { id: id, userId: user.id },
+      },
+    );
 
     return { message: 'Item removed from wishlist successfully' };
   }
