@@ -88,4 +88,9 @@ export class UsersController {
   async getProfile(@Request() req) {
     return await this.usersService.getProfile(req.user.id);
   }
+
+  @Get('customerCount')
+  async getCustomerCount() {
+    return await this.usersService.getCustomerCount();
+  }
 }

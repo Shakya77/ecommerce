@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import slugify from 'slugify';
 import {
@@ -16,6 +16,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductHasCategory } from './entities/product-has-category.entity';
 import { ProductHasMedia } from './entities/product-has-media.entity';
 import { Product } from './entities/product.entity';
+import { OrderItem } from 'src/order/entities/order-item.entity';
 
 @Injectable()
 export class ProductService {
@@ -384,6 +385,27 @@ export class ProductService {
       where: {
         slug,
       },
+    });
+  }
+
+  async productSold() {
+    return await this.productRepository.findAll({
+      attributes: [
+        'id',
+        'name',
+        [fn('COALESCE', fn('SUM', col('orderItems.quantity')), 0), 'totalSold'],
+      ],
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          attributes: [],
+        },
+      ],
+      group: ['Product.id', 'Product.name'],
+      order: [[fn('SUM', col('orderItems.quantity')), 'DESC']],
+      limit: 10,
+      subQuery: false,
     });
   }
 }

@@ -192,4 +192,12 @@ export class UsersService {
 
     return user;
   }
+
+  async getCustomerCount() {
+    const count = await this.usersRepository.count({
+      where: { role: Roles.CUSTOMER },
+    });
+
+    return { count };
+  }
 }

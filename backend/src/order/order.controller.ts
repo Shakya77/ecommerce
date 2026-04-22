@@ -31,26 +31,31 @@ export class OrderController {
   @AllowedRoles(Roles.ADMIN)
   @UseGuards(RolesGuard)
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  async findAll() {
+    return await this.orderService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
-    return this.orderService.findOne(+id, req.user);
+  async findOne(@Param('id') id: string, @Request() req) {
+    return await this.orderService.findOne(+id, req.user);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
     @Request() req,
   ) {
-    return this.orderService.update(+id, updateOrderDto, req.user);
+    return await this.orderService.update(+id, updateOrderDto, req.user);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @Request() req) {
     return this.orderService.remove(+id, req.user);
+  }
+
+  @Get('report/totalRevenue')
+  async totalRevenue() {
+    return await this.orderService.totalRevenue();
   }
 }

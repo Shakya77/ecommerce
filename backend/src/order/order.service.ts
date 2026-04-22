@@ -20,7 +20,7 @@ import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
 import { ProductHasCategory } from 'src/product/entities/product-has-category.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Roles, User } from 'src/users/entities/user.entity';
-import { Op } from 'sequelize';
+import { col, fn, Op } from 'sequelize';
 
 @Injectable()
 export class OrderService {
@@ -282,5 +282,21 @@ export class OrderService {
     }
 
     return { message: 'Order removed successfully' };
+  }
+
+  async totalRevenue() {
+    const result = (await this.orderRepository.findOne({
+      where: {
+        status: 'COMPLETED',
+      },
+      attributes: [
+        [fn('COALESCE', fn('SUM', col('totalAmount')), 0), 'totalRevenue'],
+      ],
+      raw: true,
+    })) as { totalRevenue: number } | null;
+
+    return {
+      totalRevenue: Number(result?.totalRevenue),
+    };
   }
 }

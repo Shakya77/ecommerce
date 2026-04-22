@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import {
-  BelongsToMany,
   Column,
   DataType,
   HasMany,
@@ -8,10 +7,10 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { Category } from 'src/category/entities/category.entity';
 import { ProductHasMedia } from './product-has-media.entity';
 import { ProductHasCategory } from './product-has-category.entity';
 import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
+import { OrderItem } from 'src/order/entities/order-item.entity';
 
 @Table({
   tableName: 'products',
@@ -57,4 +56,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => Wishlist)
   wishlists: Wishlist[];
+
+  @HasMany(() => OrderItem)
+  orderItems: OrderItem[];
 }

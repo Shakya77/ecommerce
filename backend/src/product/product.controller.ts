@@ -91,4 +91,9 @@ export class ProductController {
   async remove(@Param('id') id: string) {
     return await this.productService.remove(+id);
   }
+
+  @Get('report/sold')
+  async productSold() {
+    return await this.productService.productSold();
+  }
 }
