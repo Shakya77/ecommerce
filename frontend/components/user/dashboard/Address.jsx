@@ -54,6 +54,10 @@ export default function Address() {
     }
   };
 
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
     fetchAddresses();
   }, []);

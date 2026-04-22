@@ -11,11 +11,12 @@ export class AddressService {
     private readonly addressRepository: typeof Address,
   ) {}
 
-  async create(createAddressDto: CreateAddressDto) {
+  async create(createAddressDto: CreateAddressDto, user: { id: number }) {
     const data = await this.addressRepository.create({
       address: createAddressDto.address,
       city: createAddressDto.city,
       state: createAddressDto.state,
+      userId: user.id,
     } as any as Address);
 
     return { message: 'Address created successfully', data };

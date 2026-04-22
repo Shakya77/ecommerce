@@ -30,6 +30,12 @@ export class AppController {
     return await this.appService.getCategories();
   }
 
+  @Public()
+  @Get('carousels')
+  async getCarousels() {
+    return await this.appService.getCarousels();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('user/orders')
   async getOrders(@Request() req) {

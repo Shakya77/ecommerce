@@ -19,7 +19,7 @@ import { Cart } from 'src/cart/entities/cart.entity';
 import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
 import { ProductHasCategory } from 'src/product/entities/product-has-category.entity';
 import { Category } from 'src/category/entities/category.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Roles, User } from 'src/users/entities/user.entity';
 import { Op } from 'sequelize';
 
 @Injectable()
@@ -88,8 +88,7 @@ export class OrderService {
         },
       );
 
-      const cartIds = items
-        .map((item) => Number(item?.cartId));
+      const cartIds = items.map((item) => Number(item?.cartId));
 
       const [updatedCartCount] = await this.cartRepository.update(
         { isActive: false },
@@ -164,12 +163,15 @@ export class OrderService {
     });
   }
 
-  async findOne(id: number, user: { id: number }) {
+  async findOne(id: number, user: { id: number; role: string }) {
+    const where: any = { id };
+
+    if (user.role !== Roles.ADMIN) {
+      where.userId = user.id;
+    }
+
     const order = await this.orderRepository.findOne({
-      where: {
-        id,
-        userId: user.id,
-      },
+      where,
       include: [
         {
           model: OrderItem,
@@ -264,7 +266,7 @@ export class OrderService {
       throw new NotFoundException('Order not found');
     }
 
-    return { message: 'Order updated successfully', orderId: order.id };
+    return { message: 'Order Placed successfully', orderId: order.id };
   }
 
   async remove(id: number, user: { id: number }) {

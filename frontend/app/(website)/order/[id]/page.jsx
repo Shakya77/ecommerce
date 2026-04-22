@@ -138,7 +138,7 @@ export default function page() {
 
       toast.success(data?.message || "Order confirmed successfully");
 
-      router.push("/order/" + orderId);
+      router.replace("/order/" + data.orderId);
     } catch (error) {
       console.error("Failed to confirm order:", error);
       toast.error(error?.response?.data?.message || "Failed to confirm order");

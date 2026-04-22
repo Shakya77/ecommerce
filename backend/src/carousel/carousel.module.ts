@@ -6,5 +6,6 @@ import { carouselProviders } from './carousel.providers';
 @Module({
   controllers: [CarouselController],
   providers: [CarouselService, ...carouselProviders],
+  exports: [CarouselService, ...carouselProviders],
 })
 export class CarouselModule {}

@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import {
+  CAROUSEL_REPOSITORY,
   CATEGORIES_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCTS_REPOSITORY,
@@ -10,6 +11,7 @@ import { ProductHasMedia } from './product/entities/product-has-media.entity';
 import { ProductHasCategory } from './product/entities/product-has-category.entity';
 import { Order } from './order/entities/order.entity';
 import { OrderItem } from './order/entities/order-item.entity';
+import { Carousel } from './carousel/entities/carousel.entity';
 @Injectable()
 export class AppService {
   constructor(
@@ -21,10 +23,21 @@ export class AppService {
 
     @Inject(ORDER_REPOSITORY)
     private readonly orderRepository: typeof Order,
+
+    @Inject(CAROUSEL_REPOSITORY)
+    private readonly carouselRepository: typeof Carousel,
   ) {}
 
   getHello(): string {
     return 'Hello World!';
+  }
+
+  async getCarousels() {
+    const data = await this.carouselRepository.findAll({
+      order: [['createdAt', 'DESC']],
+    });
+
+    return data;
   }
 
   async getProducts() {
