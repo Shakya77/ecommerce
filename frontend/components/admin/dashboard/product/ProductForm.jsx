@@ -35,14 +35,12 @@ export default function ProductForm({ mode = "create", productId = null }) {
 
     const loadProduct = async () => {
       try {
-        const response = await api.get(`/product/${productId}`);
-        const product = response.data;
+        const { data } = await api.get(`/product/${productId}`);
+        const product = data;
 
         setName(product.name || "");
         setPrice(product.price?.toString() || "");
-        setCategoryIds(
-          (product.productCategories || []).map((item) => item.id),
-        );
+        setCategoryIds(product.productCategories.map((pc) => pc.categoryId));
         setExistingImages(product.medias || []);
         setContent(product.description || "");
       } catch (error) {
@@ -150,7 +148,7 @@ export default function ProductForm({ mode = "create", productId = null }) {
   return (
     <>
       <Button
-        onClick={() => router.push("/dashboard/product")}
+        onClick={() => router.back()}
         variant="outline"
         className="max-w-max mb-4"
       >

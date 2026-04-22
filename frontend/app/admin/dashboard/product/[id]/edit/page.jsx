@@ -1,6 +1,6 @@
 "use client";
 
-import ProductForm from "@/components/dashboard/product/ProductForm";
+import ProductForm from "@/components/admin/dashboard/product/ProductForm";
 import { useParams } from "next/navigation";
 
 export default function Page() {
