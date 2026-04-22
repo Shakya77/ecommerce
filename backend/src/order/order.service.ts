@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
@@ -11,6 +16,7 @@ import {
 import { OrderItem } from './entities/order-item.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
+import { ProductHasMedia } from 'src/product/entities/product-has-media.entity';
 
 @Injectable()
 export class OrderService {
@@ -29,7 +35,7 @@ export class OrderService {
     const { items } = createOrderDto;
 
     if (!items || items.length === 0) {
-      throw new Error('No items provided');
+      throw new BadRequestException('No items provided');
     }
 
     const transaction = await this.orderRepository.sequelize!.transaction();
@@ -56,7 +62,11 @@ export class OrderService {
         const product = productMap.get(item.id);
 
         if (!product) {
-          throw new Error(`Product with id ${item.id} not found`);
+          throw new BadRequestException(`Product with id ${item.id} not found`);
+        }
+
+        if (!item.quantity || item.quantity <= 0) {
+          throw new BadRequestException('Invalid quantity for order item');
         }
 
         return {
@@ -99,21 +109,105 @@ export class OrderService {
     }
   }
 
-  async findAll() {
-    return await this.orderRepository.findAll();
-  }
-
-  async findOne(id: number) {
-    return await this.orderRepository.findOne({ where: { id } });
-  }
-
-  async update(id: number, updateOrderDto: UpdateOrderDto) {
-    return await this.orderRepository.update(updateOrderDto as any as Order, {
-      where: { id },
+  async findAll(user: { id: number }) {
+    return await this.orderRepository.findAll({
+      where: {
+        userId: user.id,
+        isActive: true,
+      },
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          include: [
+            {
+              model: Product,
+              as: 'getProduct',
+              attributes: ['id', 'name', 'slug', 'price'],
+              include: [
+                {
+                  model: ProductHasMedia,
+                  as: 'medias',
+                  attributes: ['id', 'path', 'filename', 'type', 'size'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
     });
   }
 
-  async remove(id: number) {
-    return await this.orderRepository.destroy({ where: { id } });
+  async findOne(id: number, user: { id: number }) {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id,
+        userId: user.id,
+      },
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems',
+          include: [
+            {
+              model: Product,
+              as: 'getProduct',
+              attributes: ['id', 'name', 'slug', 'price'],
+              include: [
+                {
+                  model: ProductHasMedia,
+                  as: 'medias',
+                  attributes: ['id', 'path', 'filename', 'type', 'size'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
+  }
+
+  async update(
+    id: number,
+    updateOrderDto: UpdateOrderDto,
+    user: { id: number },
+  ) {
+    const [updatedCount] = await this.orderRepository.update(
+      updateOrderDto as any as Order,
+      {
+        where: {
+          id,
+          userId: user.id,
+        },
+      },
+    );
+
+    if (!updatedCount) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { message: 'Order updated successfully' };
+  }
+
+  async remove(id: number, user: { id: number }) {
+    const deletedCount = await this.orderRepository.destroy({
+      where: {
+        id,
+        userId: user.id,
+      },
+    });
+
+    if (!deletedCount) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return { message: 'Order removed successfully' };
   }
 }

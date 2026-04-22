@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript';
 import { User } from 'src/users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
+import { Address } from 'src/address/entities/address.entity';
 
 const enum OrderStatus {
   PENDING = 'PENDING',
@@ -54,4 +55,14 @@ export class Order extends Model<Order> {
 
   @HasMany(() => OrderItem)
   orderItems: OrderItem[];
+
+  @ForeignKey(() => Address)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  addressId: number;
+
+  @BelongsTo(() => Address)
+  getAddress: Address;
 }

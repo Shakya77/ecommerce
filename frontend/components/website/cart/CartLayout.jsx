@@ -19,10 +19,12 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { ShoppingCart } from "lucide-react";
-import api from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function CartLayout({ data, isLoading, error, onRefresh }) {
+  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState([]);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const cartItems = Array.isArray(data) ? data : [];
 
   useEffect(() => {
@@ -66,18 +68,24 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
   };
 
   const handleCheckout = async () => {
-    if (selectedItems.length === 0) {
+    if (selectedItems.length === 0 || isCheckingOut) {
       return;
     }
 
-    console.log(selectedItems);
-
     try {
-      const response = await api.post("/order", { items: selectedItems });
-      await onRefresh?.();
-      toast.success(response?.data?.message);
+      setIsCheckingOut(true);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          "checkout_items",
+          JSON.stringify(selectedItems),
+        );
+      }
+
+      router.push("/checkout");
     } catch (error) {
-      toast.error("Failed to checkout");
+      toast.error("Failed to proceed to checkout");
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -171,7 +179,11 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
         ))}
       </div>
 
-      <CartSummary data={selectedItems} onCheckout={handleCheckout} />
+      <CartSummary
+        data={selectedItems}
+        onCheckout={handleCheckout}
+        isCheckingOut={isCheckingOut}
+      />
     </div>
   );
 }

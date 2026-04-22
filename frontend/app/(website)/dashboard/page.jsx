@@ -5,14 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Account from "@/components/user/dashboard/Account";
 import Address from "@/components/user/dashboard/Address";
+import Order from "@/components/user/dashboard/Order";
 import { fetcher } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 
 export default function page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     data: profile,
@@ -22,6 +24,9 @@ export default function page() {
   } = useSWR("/users/profile", fetcher);
 
   const { user } = useAuth();
+
+  const defaultTab =
+    searchParams.get("tab") === "orders" ? "orders" : "account";
 
   useEffect(() => {
     document.title = "Dashboard - My Account";
@@ -34,7 +39,11 @@ export default function page() {
   if (isLoading) return <Loader />;
 
   return (
-    <Tabs defaultValue="account" orientation="vertical" className="flex gap-6">
+    <Tabs
+      defaultValue={defaultTab}
+      orientation="vertical"
+      className="flex gap-6"
+    >
       <TabsList className="flex flex-col w-56 p-2">
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -49,7 +58,9 @@ export default function page() {
       </TabsContent>
       <TabsContent value="orders">
         <Card className="rounded-sm">
-          <CardContent>hello 2</CardContent>
+          <CardContent>
+            <Order />
+          </CardContent>
         </Card>
       </TabsContent>
       <TabsContent value="address">

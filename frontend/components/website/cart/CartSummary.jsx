@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export default function CartSummary({ data, onCheckout }) {
+export default function CartSummary({ data, onCheckout, isCheckingOut }) {
   const items = Array.isArray(data) ? data : [];
 
   const numberOfItems = items.reduce(
@@ -32,10 +32,10 @@ export default function CartSummary({ data, onCheckout }) {
 
       <Button
         aria-label="Checkout"
-        disabled={numberOfItems === 0}
+        disabled={numberOfItems === 0 || isCheckingOut}
         onClick={onCheckout}
       >
-        Checkout
+        {isCheckingOut ? "Processing..." : "Checkout"}
       </Button>
     </div>
   );

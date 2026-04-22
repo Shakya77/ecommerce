@@ -61,6 +61,28 @@ export const getCartItems = async () => {
   }
 };
 
+export const getUserOrders = async () => {
+  try {
+    const { data } = await api.get("/order");
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    return null;
+  }
+};
+
+export const getUserOrderById = async (orderId) => {
+  try {
+    const { data } = await api.get(`/order/${orderId}`);
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching user order:", error);
+    return null;
+  }
+};
+
 export const onUpdateCartItemQuantity = async (cartItemId, quantity) => {
   try {
     const data = await api.patch(`/cart/${cartItemId}`, { quantity });
