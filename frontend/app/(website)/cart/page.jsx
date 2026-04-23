@@ -1,24 +1,35 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import CartLayout from "@/components/website/cart/CartLayout";
+import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import { fetcher } from "@/constants";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import useSWR from "swr";
 
 export default function Page() {
+  const [open, setOpen] = useState(false);
+
   const query = `/cart`;
-
-  const { data, isLoading, error, mutate } = useSWR(query, fetcher);
-
   const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    if (loading) return;
+  const shouldFetch = !loading && isAuthenticated;
 
-    if (!isAuthenticated) {
-    }
-  }, [isAuthenticated, loading]);
+  const { data, isLoading, error, mutate } = useSWR(
+    shouldFetch ? query : null,
+    fetcher,
+  );
 
   return (
     <>
@@ -27,12 +38,42 @@ export default function Page() {
         <p className="text-sm text-gray-600">View your cart and checkout</p>
       </div>
 
-      <CartLayout
-        data={data}
-        isLoading={isLoading}
-        error={error}
-        onRefresh={mutate}
-      />
+      {!loading && !isAuthenticated ? (
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <ShoppingCart />
+            </EmptyMedia>
+            <EmptyTitle>Cart </EmptyTitle>
+            <EmptyDescription>
+              Please Login in order to view your cart.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Link href="/products">Browse Products</Link>
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                Login
+              </Button>
+              <RequireAuthDialog
+                open={open}
+                onOpenChange={setOpen}
+                action={"cart"}
+              />
+            </div>
+          </EmptyContent>
+        </Empty>
+      ) : (
+        <CartLayout
+          data={data}
+          isLoading={isLoading}
+          error={error}
+          onRefresh={mutate}
+        />
+      )}
     </>
   );
 }

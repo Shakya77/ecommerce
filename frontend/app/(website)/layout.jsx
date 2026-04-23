@@ -24,7 +24,7 @@ export default function layout({ children }) {
     <>
       <CartProvider>
         <NavigationBar onOpenAuthModal={handleOpenAuthModal} />
-        <div className="mx-auto max-w-360  sm:px-6 lg:px-8 pb-8">
+        <div className="mx-auto max-w-360 sm:px-6 lg:px-8 pb-8">
           <WebsiteBreadcrumb />
           <main className="mt-6">{children}</main>
         </div>

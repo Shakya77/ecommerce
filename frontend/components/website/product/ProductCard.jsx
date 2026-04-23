@@ -67,7 +67,7 @@ export default function ProductCard({ id, image, slug, title, price }) {
   };
 
   return (
-    <div className="group w-full max-w-sm overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-xl">
+    <div className="group w-full max-w-sm overflow-hidden h-fit rounded-sm border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-xl">
       <Link href={`/products/${slug}`} className="block">
         <div className="relative h-64 overflow-hidden">
           <img

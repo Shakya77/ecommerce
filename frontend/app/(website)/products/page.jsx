@@ -150,14 +150,38 @@ export default function Page() {
               <LodingSpinner />
             </div>
           )}
+
+          {items.length === 0 && !loadingMore && (
+            <div className="col-span-full flex flex-col items-center justify-center py-10">
+              <p className="text-lg font-medium text-gray-700 text-center">
+                {search && checked.length > 0
+                  ? `No results for "${search}" in selected categories`
+                  : search
+                    ? `No results found for "${search}"`
+                    : checked.length > 0
+                      ? "No products in selected category"
+                      : "No products found"}
+              </p>
+
+              <p className="text-sm text-gray-500 mt-1 text-center">
+                Try adjusting your search or filters
+              </p>
+
+              <Button className="mt-4" onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            </div>
+          )}
+
+          {items.length > 0 && !hasMore && (
+            <div className="col-span-full flex justify-center py-6">
+              <p className="text-gray-500">No more products</p>
+            </div>
+          )}
         </div>
       </div>
 
       <div ref={infiniteRef} className="h-10" />
-
-      {!hasMore && (
-        <p className="text-center text-gray-500 mt-4">No more products</p>
-      )}
     </>
   );
 }

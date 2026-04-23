@@ -399,6 +399,7 @@ export class ProductService {
         {
           model: OrderItem,
           as: 'orderItems',
+          attributes: [],
           required: true,
         },
       ],
