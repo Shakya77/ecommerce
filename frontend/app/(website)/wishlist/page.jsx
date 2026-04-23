@@ -39,7 +39,7 @@ export default function page() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold mt-6">My Wishlist</h1>
+      <h1 className="text-2xl font-bold my-4">Wishlist</h1>
       {!loading && !isAuthenticated ? (
         <Empty className="border border-dashed">
           <EmptyHeader>
