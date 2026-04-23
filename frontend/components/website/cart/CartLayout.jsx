@@ -146,7 +146,7 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
       <div className="space-y-4 md:col-span-3">
-        <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3">
+        <div className="flex items-center justify-between rounded-sm border border-gray-200 bg-white px-4 py-3">
           <label className="flex items-center gap-3 text-sm font-medium text-gray-700">
             <Checkbox
               checked={allSelected}

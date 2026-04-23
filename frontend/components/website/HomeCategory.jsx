@@ -7,10 +7,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
 export default function HomeCategory() {
@@ -35,9 +32,6 @@ export default function HomeCategory() {
             </CarouselItem>
           ))}
         </CarouselContent>
-
-        <CarouselPrevious />
-        <CarouselNext />
       </Carousel>
     </div>
   );

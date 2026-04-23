@@ -15,7 +15,7 @@ export default function CartCard({
   onDelete,
 }) {
   return (
-    <Card>
+    <Card className="rounded-sm">
       <CardContent>
         <div className="flex gap-4">
           <div className="flex justify-center items-center">
@@ -25,7 +25,7 @@ export default function CartCard({
               className="w-5 h-5"
             />
           </div>
-          <div className="relative w-20 h-20 md:w-28 md:h-28 shrink-0 bg-linear-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden">
+          <div className="relative w-20 h-20 md:w-28 md:h-28 shrink-0  overflow-hidden">
             <img
               src={toImageUrl(data.getProduct.medias[0]?.path)}
               alt={data.getProduct.name}
