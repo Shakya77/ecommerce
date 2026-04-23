@@ -48,6 +48,12 @@ export class Product extends Model<Product> {
   })
   price: number;
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  isActive: boolean;
+
   @HasMany(() => ProductHasCategory)
   productCategories: ProductHasCategory[];
 

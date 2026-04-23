@@ -13,14 +13,11 @@ import { fetcher } from "@/constants";
 import api from "@/lib/api";
 import { Delete, Edit, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
 export default function Page() {
   const { data, error, isLoading, mutate } = useSWR("/product", fetcher);
-
-  const rows = useMemo(() => data?.data ?? [], [data]);
 
   const remove = async (id) => {
     try {
@@ -50,7 +47,7 @@ export default function Page() {
       cell: ({ row }) => `Rs.${Number(row.original.price).toLocaleString()}`,
     },
     {
-      accessorKey: "Status",
+      accessorKey: "isActive",
       header: "Status",
       cell: ({ row }) => (row.original.isActive ? "Active" : "Inactive"),
     },
@@ -102,7 +99,7 @@ export default function Page() {
         </Button>
       </div>
 
-      <DataTable columns={columns} data={rows} isLoading={isLoading} />
+      <DataTable columns={columns} data={data} isLoading={isLoading} />
     </div>
   );
 }

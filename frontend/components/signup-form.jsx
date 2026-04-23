@@ -229,7 +229,7 @@ export function SignupForm({
               <Button
                 type="submit"
                 disabled={isLoginSubmitting}
-                className="w-full bg-linear-to-r from-purple-500 to-purple-600 text-white"
+                className="w-full "
               >
                 {isLoginSubmitting ? "Signing in..." : "Sign in"}
               </Button>

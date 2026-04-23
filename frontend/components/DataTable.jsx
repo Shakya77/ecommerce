@@ -6,7 +6,6 @@ import {
   useReactTable,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { DataTablePagination } from "@/components/DataTablePagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -27,7 +26,7 @@ export function DataTable({ columns, data, isLoading = false }) {
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 20,
       },
     },
   });

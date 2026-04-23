@@ -160,7 +160,7 @@ export default function Address() {
               id="address"
               value={formData.address}
               onChange={(event) => updateField("address", event.target.value)}
-              placeholder="221B Baker Street"
+              placeholder="Bhagwati Marga"
             />
           </div>
 
@@ -170,7 +170,7 @@ export default function Address() {
               id="city"
               value={formData.city}
               onChange={(event) => updateField("city", event.target.value)}
-              placeholder="London"
+              placeholder="Nepal"
             />
           </div>
 
@@ -180,7 +180,7 @@ export default function Address() {
               id="state"
               value={formData.state}
               onChange={(event) => updateField("state", event.target.value)}
-              placeholder="Greater London"
+              placeholder="Koshi"
             />
           </div>
         </div>

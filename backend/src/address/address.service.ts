@@ -22,9 +22,9 @@ export class AddressService {
     return { message: 'Address created successfully', data };
   }
 
-  async findAll() {
+  async findAll(user: { id: number }) {
     return await this.addressRepository.findAll({
-      where: { isActive: true },
+      where: { userId: user.id, isActive: true },
     });
   }
 

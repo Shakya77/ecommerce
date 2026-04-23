@@ -216,7 +216,7 @@ export class ProductService {
       order: [['createdAt', 'DESC']],
     });
 
-    return { data };
+    return data;
   }
 
   async findOne(id: number) {
@@ -399,11 +399,10 @@ export class ProductService {
         {
           model: OrderItem,
           as: 'orderItems',
-          attributes: [],
+          required: true,
         },
       ],
       group: ['Product.id', 'Product.name'],
-      order: [[fn('SUM', col('orderItems.quantity')), 'DESC']],
       limit: 10,
       subQuery: false,
     });
