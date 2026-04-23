@@ -134,18 +134,6 @@ export function NavigationBar({ onOpenAuthModal }) {
               size="icon-sm"
               className="text-muted-foreground hover:text-foreground"
             >
-              <Link href="/">
-                <Search className="size-4" />
-                <span className="sr-only">Search</span>
-              </Link>
-            </Button>
-
-            <Button
-              asChild
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-foreground"
-            >
               <Link href="/wishlist">
                 <Heart className="size-4" />
                 <span className="sr-only">Wishlist</span>

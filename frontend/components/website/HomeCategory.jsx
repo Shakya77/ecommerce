@@ -10,6 +10,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export default function HomeCategory() {
   const { data, isLoading, error } = useSWR("/categories", fetcher);
@@ -42,8 +44,15 @@ export default function HomeCategory() {
 }
 
 function CategoryCard({ category }) {
+  const router = useRouter();
+
   return (
-    <div className="p-4 border rounded-lg bg-white hover:shadow-md transition">
+    <div
+      className="p-4 border rounded-lg bg-white hover:shadow-md transition cursor-pointer"
+      onClick={() => {
+        router.push(`/products?category=${category.id}`);
+      }}
+    >
       <h3 className="text-sm font-semibold text-center">{category.name}</h3>
     </div>
   );

@@ -51,7 +51,7 @@ export default function WebsiteBreadcrumb() {
   const segments = cleanPath.split("/").filter(Boolean);
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="mt-6">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>

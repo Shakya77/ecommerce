@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { Public } from './auth/decorators/public.decorator';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
@@ -14,8 +21,13 @@ export class AppController {
 
   @Public()
   @Get('products')
-  async getProducts() {
-    return await this.appService.getProducts();
+  async getProducts(
+    @Query('search') search: string,
+    @Query('limit') limit = 10,
+    @Query('page') page = 1,
+    @Query('categories') categories: string,
+  ) {
+    return await this.appService.getProducts(search, limit, page, categories);
   }
 
   @Public()

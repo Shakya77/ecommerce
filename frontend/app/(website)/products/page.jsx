@@ -7,32 +7,61 @@ import { toImageUrl } from "@/lib/image";
 import { useEffect, useState, useCallback } from "react";
 import useSWR from "swr";
 import useInfiniteScroll from "react-infinite-scroll-hook";
+import CategoryCheckbox from "@/components/website/category/CategoryCheckbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronsUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 
 export default function Page() {
   const [search, setSearch] = useState("");
-  const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [checked, setChecked] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
 
-  const query = `/products?search=${search}&limit=8&page=${page}`;
-  const { data } = useSWR(query, fetcher);
+  const query = `/products?search=${search}&limit=8&page=${page}&categories=${checked.join(",")}`;
+  const { data, mutate } = useSWR(query, fetcher);
+  const { data: categoryData } = useSWR("/categories", fetcher);
+
+  const handleCheck = (id) => {
+    setChecked(
+      (prev) =>
+        prev.includes(id)
+          ? prev.filter((item) => item !== id) // remove
+          : [...prev, id], // add
+    );
+  };
+
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setChecked([Number(categoryFromUrl)]);
+    }
+  }, [categoryFromUrl]);
 
   useEffect(() => {
     setItems([]);
     setPage(1);
     setHasMore(true);
-  }, [search]);
+    mutate();
+    console.log(checked, query);
+  }, [search, checked]);
 
-  // append data
   useEffect(() => {
     if (!data) return;
 
     setItems((prev) => [...prev, ...data.data]);
     setHasMore(data.hasMore);
 
-    setLoadingMore(false); // 👈 important
+    setLoadingMore(false);
   }, [data]);
 
   const loadMore = useCallback(() => {
@@ -45,6 +74,11 @@ export default function Page() {
     }, 3000);
   }, [hasMore, loadingMore]);
 
+  const clearFilters = () => {
+    setChecked([]);
+    setSearch("");
+  };
+
   const [infiniteRef] = useInfiniteScroll({
     loading: !data,
     hasNextPage: hasMore,
@@ -53,42 +87,73 @@ export default function Page() {
     rootMargin: "0px 0px 400px 0px",
   });
 
-  const getCategories = async () => {
-    const { data } = await fetcher("/categories");
-    setCategories(data);
-  };
-
   useEffect(() => {
     document.title = "Products - My E-commerce Store";
-    getCategories();
   }, []);
 
   return (
     <>
-      {/* Search */}
-      <div className="mb-6 w-sm">
-        <Input
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      {/* Products */}
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((product) => (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            image={toImageUrl(product.medias?.[0]?.path)}
-            slug={product.slug}
-            title={product.name}
-            price={product.price}
+      <div className="grid gap-8 lg:grid-cols-4">
+        <div className="lg:col-span-1">
+          <div className="mb-2 flex items-center justify-between text-sm font-medium">
+            Filters:
+            <Button className="w-fit" onClick={clearFilters}>
+              Clear
+            </Button>
+          </div>
+          <Input
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
-        ))}
+
+          <Collapsible
+            open={isOpen}
+            onOpenChange={setIsOpen}
+            className="flex w-full flex-col gap-2 mt-3"
+          >
+            <div className="flex items-center justify-between gap-4 ">
+              <h4 className="text-sm font-bold">Category</h4>
+
+              <div className="flex items-center gap-2">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="icon" className="size-8">
+                    <ChevronsUpDown />
+                    <span className="sr-only">Toggle details</span>
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </div>
+
+            <CollapsibleContent className="flex flex-col gap-2">
+              {categoryData?.map((category) => (
+                <CategoryCheckbox
+                  key={category.id}
+                  id={category.id}
+                  name={category.name?.toLowerCase()}
+                  checked={checked.includes(category.id)}
+                  onChange={handleCheck}
+                />
+              ))}
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+
+        {/* Products grid */}
+        <div className="lg:col-span-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((product) => (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              image={toImageUrl(product.medias?.[0]?.path)}
+              slug={product.slug}
+              title={product.name}
+              price={product.price}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Sentinel */}
       <div ref={infiniteRef} className="h-10" />
 
       {loadingMore && (
@@ -97,7 +162,6 @@ export default function Page() {
         </div>
       )}
 
-      {/* End */}
       {!hasMore && (
         <p className="text-center text-gray-500 mt-4">No more products</p>
       )}

@@ -12,6 +12,7 @@ import { ProductHasCategory } from './product/entities/product-has-category.enti
 import { Order } from './order/entities/order.entity';
 import { OrderItem } from './order/entities/order-item.entity';
 import { Carousel } from './carousel/entities/carousel.entity';
+import { Op } from 'sequelize';
 @Injectable()
 export class AppService {
   constructor(
@@ -40,22 +41,44 @@ export class AppService {
     return data;
   }
 
-  async getProducts() {
-    const data = await this.productsRepository.findAll({
-      order: [['createdAt', 'DESC']],
-      attributes: ['id', 'name', 'slug', 'price'],
+  async getProducts(search: string, limit = 10, page = 1, categories = '') {
+    const offset = (page - 1) * limit;
+    const categoryIds = categories
+      .split(',')
+      .map((id) => Number(id.trim()))
+      .filter((id) => Number.isInteger(id) && id > 0);
+    const hasCategoryFilter = categoryIds.length > 0;
+
+    const { rows, count } = await this.productsRepository.findAndCountAll({
+      where: {
+        [Op.or]: [{ name: { [Op.iLike]: `%${search}%` } }],
+      },
+      order: [
+        ['id', 'DESC'],
+        ['createdAt', 'DESC'],
+      ],
+      limit,
+      offset,
+      distinct: true,
+      attributes: ['id', 'name', 'slug', 'price', 'createdAt'],
       include: [
         {
           model: ProductHasMedia,
           as: 'medias',
           attributes: ['id', 'path', 'filename', 'type', 'size'],
-          limit: 1,
-          order: [['createdAt', 'DESC']],
         },
         {
           model: ProductHasCategory,
           as: 'productCategories',
           attributes: ['id', 'categoryId'],
+          where: hasCategoryFilter
+            ? {
+                categoryId: {
+                  [Op.in]: categoryIds,
+                },
+              }
+            : undefined,
+          required: hasCategoryFilter,
           include: [
             {
               model: Category,
@@ -67,7 +90,12 @@ export class AppService {
       ],
     });
 
-    return data;
+    return {
+      data: rows,
+      total: count,
+      hasMore: offset + rows.length < count,
+      page,
+    };
   }
 
   async getProductDetail(slug: string) {
