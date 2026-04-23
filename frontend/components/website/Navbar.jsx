@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -7,7 +8,6 @@ import {
   Heart,
   LogOut,
   Menu,
-  Search,
   ShoppingCart,
   User,
   UserRound,
@@ -15,6 +15,15 @@ import {
 
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -102,6 +111,7 @@ export function NavigationBar({ onOpenAuthModal }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { count, setCountState } = useCart();
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const openAuthModal = (tab) => {
     onOpenAuthModal?.(tab);
@@ -110,6 +120,7 @@ export function NavigationBar({ onOpenAuthModal }) {
   const onLogout = () => {
     logout();
     setCountState(0);
+    setLogoutDialogOpen(false);
   };
 
   return (
@@ -203,7 +214,7 @@ export function NavigationBar({ onOpenAuthModal }) {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
-                    onClick={() => onLogout()}
+                    onClick={() => setLogoutDialogOpen(true)}
                     className="flex items-center gap-2 text-red-500 focus:text-red-500"
                   >
                     <LogOut className="size-4" />
@@ -302,7 +313,7 @@ export function NavigationBar({ onOpenAuthModal }) {
                   {/* Logout */}
                   {user && (
                     <Button
-                      onClick={logout}
+                      onClick={() => setLogoutDialogOpen(true)}
                       variant="outline"
                       className="flex items-center justify-center gap-2 rounded-sm col-span-2 sm:col-span-1"
                     >
@@ -316,6 +327,26 @@ export function NavigationBar({ onOpenAuthModal }) {
           </div>
         </div>
       </div>
+
+      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Log out?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to log out of your account?
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button variant="destructive" onClick={onLogout}>
+              Log out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
