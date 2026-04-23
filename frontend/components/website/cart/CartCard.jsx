@@ -2,9 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
 import { QuantityInput } from "@/components/QuantityInput";
-import WishlistButton from "@/components/WishlistButton";
 import DeleteButton from "@/components/DeleteButton";
 import { toImageUrl } from "@/lib/image";
 
@@ -16,8 +14,6 @@ export default function CartCard({
   onQuantityChange,
   onDelete,
 }) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
-
   return (
     <Card>
       <CardContent>

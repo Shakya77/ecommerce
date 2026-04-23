@@ -15,6 +15,9 @@ export default function DeleteButton({
   isDeleting = false,
   onDelete,
   confirm = false,
+  confirmTitle = "Delete this item?",
+  confirmDescription = "This action cannot be undone. The item will be removed.",
+  confirmActionLabel = "Delete",
   size = "icon",
   className = "",
 }) {
@@ -43,11 +46,8 @@ export default function DeleteButton({
         <DialogTrigger asChild>{triggerButton}</DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Delete this item?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. The product will be removed from
-              your cart.
-            </DialogDescription>
+            <DialogTitle>{confirmTitle}</DialogTitle>
+            <DialogDescription>{confirmDescription}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
@@ -61,7 +61,7 @@ export default function DeleteButton({
                 onClick={handleDelete}
                 disabled={isDeleting}
               >
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting ? "Deleting..." : confirmActionLabel}
               </Button>
             </DialogClose>
           </DialogFooter>

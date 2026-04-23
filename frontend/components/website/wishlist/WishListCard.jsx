@@ -1,8 +1,9 @@
 "use client";
 
-import { Trash2, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import DeleteButton from "@/components/DeleteButton";
 import { toImageUrl } from "@/lib/image";
 import { onAddToCart, onRemoveFromWishlist } from "@/services/website.http";
 
@@ -51,14 +52,14 @@ export default function WishListCard({ data, mutate }) {
                   <span className="text-sm">Add to Cart</span>
                 </Button>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-red-50 hover:text-red-600 transition-all duration-300"
-                  onClick={() => remove(data.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <DeleteButton
+                  onDelete={remove}
+                  confirm
+                  confirmTitle="Remove from wishlist?"
+                  confirmDescription="This will remove the product from your wishlist. You can add it back any time."
+                  confirmActionLabel="Remove"
+                  className="hover:bg-red-50 hover:text-red-600 transition-all duration-300 h-10 w-10"
+                />
               </div>
             </div>
           </div>
