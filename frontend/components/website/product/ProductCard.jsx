@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { use, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import AddToCartButton from "@/components/website/product/AddToCartButton";
@@ -13,6 +13,7 @@ import { useCart } from "@/context/CartContext";
 
 export default function ProductCard({ id, image, slug, title, price }) {
   const { isAuthenticated, loading } = useAuth();
+  const { refreshCount } = useCart();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -32,16 +33,20 @@ export default function ProductCard({ id, image, slug, title, price }) {
 
     setIsAddingToCart(true);
 
-    const response = await onAddToCart(id, 1);
-    const { refreshCount } = useCart();
-    setIsAddingToCart(false);
+    try {
+      const response = await onAddToCart(id, 1);
 
-    if (!response) {
-      return;
+      if (!response) {
+        return;
+      }
+
+      await refreshCount();
+
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+    } finally {
+      setIsAddingToCart(false);
     }
-
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
   };
 
   const handleAddToWishlist = async () => {

@@ -2,11 +2,13 @@
 
 import api from "@/lib/api";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [count, setCountState] = useState(0);
+  const { isAuthenticated, loading, user } = useAuth();
 
   const fetchCount = async () => {
     try {
@@ -18,14 +20,21 @@ export function CartProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchCount();
-  }, []);
+    if (loading) return;
+
+    setCountState(0);
+
+    if (isAuthenticated) {
+      fetchCount();
+    }
+  }, [user]);
 
   return (
     <CartContext.Provider
       value={{
         count,
         refreshCount: fetchCount,
+        setCountState,
       }}
     >
       {children}

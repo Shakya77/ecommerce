@@ -5,7 +5,7 @@ import ProductCard from "@/components/website/product/ProductCard";
 import { fetcher } from "@/constants";
 import { toImageUrl } from "@/lib/image";
 import { useEffect, useState, useCallback } from "react";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import CategoryCheckbox from "@/components/website/category/CategoryCheckbox";
 import {
@@ -16,30 +16,30 @@ import {
 import { ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
+import { LodingSpinner } from "@/components/loading-spinner";
+import useSWR from "swr";
 
 export default function Page() {
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [items, setItems] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [checked, setChecked] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
 
-  const query = `/products?search=${search}&limit=8&page=${page}&categories=${checked.join(",")}`;
-  const { data, mutate } = useSWR(query, fetcher);
+  const getKey = (pageIndex, previousPageData) => {
+    if (previousPageData && !previousPageData.hasMore) return null;
+
+    return `/products?search=${search}&limit=8&page=${pageIndex + 1}&categories=${checked.join(",")}`;
+  };
+
+  const { data, size, setSize, mutate } = useSWRInfinite(getKey, fetcher);
+
   const { data: categoryData } = useSWR("/categories", fetcher);
 
-  const handleCheck = (id) => {
-    setChecked(
-      (prev) =>
-        prev.includes(id)
-          ? prev.filter((item) => item !== id) // remove
-          : [...prev, id], // add
-    );
-  };
+  const items = data ? data.flatMap((page) => page.data) : [];
+  const hasMore = data?.[data.length - 1]?.hasMore;
 
   useEffect(() => {
     if (categoryFromUrl) {
@@ -47,45 +47,41 @@ export default function Page() {
     }
   }, [categoryFromUrl]);
 
-  useEffect(() => {
-    setItems([]);
-    setPage(1);
-    setHasMore(true);
-    mutate();
-    console.log(checked, query);
-  }, [search, checked]);
-
-  useEffect(() => {
-    if (!data) return;
-
-    setItems((prev) => [...prev, ...data.data]);
-    setHasMore(data.hasMore);
-
-    setLoadingMore(false);
-  }, [data]);
-
   const loadMore = useCallback(() => {
     if (!hasMore || loadingMore) return;
 
     setLoadingMore(true);
-
     setTimeout(() => {
-      setPage((prev) => prev + 1);
+      setSize(size + 1);
     }, 3000);
-  }, [hasMore, loadingMore]);
+  }, [hasMore, loadingMore, size, setSize]);
+
+  useEffect(() => {
+    setLoadingMore(false);
+  }, [data]);
+
+  const [infiniteRef] = useInfiniteScroll({
+    loading: loadingMore,
+    hasNextPage: hasMore,
+    onLoadMore: loadMore,
+    rootMargin: "0px 0px 400px 0px",
+  });
+
+  const handleCheck = (id) => {
+    setChecked((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
+  };
 
   const clearFilters = () => {
     setChecked([]);
     setSearch("");
+    mutate();
   };
 
-  const [infiniteRef] = useInfiniteScroll({
-    loading: !data,
-    hasNextPage: hasMore,
-    onLoadMore: loadMore,
-    disabled: false,
-    rootMargin: "0px 0px 400px 0px",
-  });
+  useEffect(() => {
+    setSize(1);
+  }, [search, checked]);
 
   useEffect(() => {
     document.title = "Products - My E-commerce Store";
@@ -101,6 +97,7 @@ export default function Page() {
               Clear
             </Button>
           </div>
+
           <Input
             placeholder="Search products..."
             value={search}
@@ -112,17 +109,14 @@ export default function Page() {
             onOpenChange={setIsOpen}
             className="flex w-full flex-col gap-2 mt-3"
           >
-            <div className="flex items-center justify-between gap-4 ">
+            <div className="flex items-center justify-between gap-4">
               <h4 className="text-sm font-bold">Category</h4>
 
-              <div className="flex items-center gap-2">
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <ChevronsUpDown />
-                    <span className="sr-only">Toggle details</span>
-                  </Button>
-                </CollapsibleTrigger>
-              </div>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="icon" className="size-8">
+                  <ChevronsUpDown />
+                </Button>
+              </CollapsibleTrigger>
             </div>
 
             <CollapsibleContent className="flex flex-col gap-2">
@@ -139,7 +133,6 @@ export default function Page() {
           </Collapsible>
         </div>
 
-        {/* Products grid */}
         <div className="lg:col-span-3 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((product) => (
             <ProductCard
@@ -151,16 +144,16 @@ export default function Page() {
               price={product.price}
             />
           ))}
+
+          {loadingMore && (
+            <div className="col-span-full flex justify-center py-6">
+              <LodingSpinner />
+            </div>
+          )}
         </div>
       </div>
 
       <div ref={infiniteRef} className="h-10" />
-
-      {loadingMore && (
-        <div className="text-center py-4 text-gray-500">
-          Loading more products...
-        </div>
-      )}
 
       {!hasMore && (
         <p className="text-center text-gray-500 mt-4">No more products</p>

@@ -21,12 +21,14 @@ import {
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { useCart } from "@/context/CartContext";
 
 export default function CartLayout({ data, isLoading, error, onRefresh }) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState([]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const cartItems = Array.isArray(data) ? data : [];
+  const { refreshCount } = useCart();
 
   useEffect(() => {
     setSelectedIds((prev) =>
@@ -99,11 +101,12 @@ export default function CartLayout({ data, isLoading, error, onRefresh }) {
 
   const handleDeleteItem = async (itemId) => {
     const response = await onRemoveCartItem(itemId);
-
     if (!response) {
       toast.error("Failed to remove cart item");
       return;
     }
+
+    refreshCount();
 
     toast.success(response?.data?.message || "Item removed from cart");
     await onRefresh?.();

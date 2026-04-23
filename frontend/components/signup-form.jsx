@@ -115,9 +115,6 @@ export function SignupForm({
       handleAuthSuccess();
     } catch (error) {
       const message = error?.response?.data?.message;
-      toast.error(
-        Array.isArray(message) ? message[0] : message || "Login failed.",
-      );
     }
   };
 

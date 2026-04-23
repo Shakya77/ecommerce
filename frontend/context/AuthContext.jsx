@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   useContext,
@@ -24,6 +25,8 @@ function decodeToken(token) {
 }
 
 export function AuthProvider({ children }) {
+  const router = useRouter();
+
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,6 +52,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    router.push("/");
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);

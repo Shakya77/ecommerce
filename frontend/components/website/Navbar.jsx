@@ -101,10 +101,15 @@ function MobileLink({ href, label, pathname, onClick }) {
 export function NavigationBar({ onOpenAuthModal }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { count } = useCart();
+  const { count, setCountState } = useCart();
 
   const openAuthModal = (tab) => {
     onOpenAuthModal?.(tab);
+  };
+
+  const onLogout = () => {
+    logout();
+    setCountState(0);
   };
 
   return (
@@ -146,12 +151,18 @@ export function NavigationBar({ onOpenAuthModal }) {
               asChild
               variant="ghost"
               size="icon-sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="relative text-muted-foreground hover:text-foreground"
             >
               <Link href="/cart">
                 <ShoppingCart className="size-4" />
-                {count}
-                <span className="sr-only">Shopping Cart </span>
+
+                {count > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[10px] leading-4 flex items-center justify-center">
+                    {count}
+                  </span>
+                )}
+
+                <span className="sr-only">Shopping Cart</span>
               </Link>
             </Button>
             {user ? (
@@ -192,7 +203,7 @@ export function NavigationBar({ onOpenAuthModal }) {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
-                    onClick={logout}
+                    onClick={() => onLogout()}
                     className="flex items-center gap-2 text-red-500 focus:text-red-500"
                   >
                     <LogOut className="size-4" />
