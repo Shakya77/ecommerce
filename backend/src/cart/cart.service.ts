@@ -124,4 +124,12 @@ export class CartService {
 
     return { message: 'Cart removed successfully' };
   }
+
+  async cartCount(user: { id: number }) {
+    const count = await this.cartRepository.count({
+      where: { isActive: true, userId: user.id },
+    });
+
+    return { count };
+  }
 }

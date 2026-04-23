@@ -2,13 +2,14 @@
 
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { use, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { RequireAuthDialog } from "@/components/website/RequireAuthDialog";
 import AddToCartButton from "@/components/website/product/AddToCartButton";
 import { onAddToCart } from "@/services/website.http";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
 
 export default function ProductCard({ id, image, slug, title, price }) {
   const { isAuthenticated, loading } = useAuth();
@@ -32,7 +33,7 @@ export default function ProductCard({ id, image, slug, title, price }) {
     setIsAddingToCart(true);
 
     const response = await onAddToCart(id, 1);
-
+    const { refreshCount } = useCart();
     setIsAddingToCart(false);
 
     if (!response) {
@@ -44,6 +45,11 @@ export default function ProductCard({ id, image, slug, title, price }) {
   };
 
   const handleAddToWishlist = async () => {
+    if (requiresAuth) {
+      setAuthPromptAction("wishlist");
+      return;
+    }
+
     setIsWishlisted((prev) => !prev);
 
     try {

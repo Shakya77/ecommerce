@@ -37,6 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useCart } from "@/context/CartContext";
 
 const topLinks = [
   { label: "Home", href: "/" },
@@ -100,6 +101,7 @@ function MobileLink({ href, label, pathname, onClick }) {
 export function NavigationBar({ onOpenAuthModal }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { count } = useCart();
 
   const openAuthModal = (tab) => {
     onOpenAuthModal?.(tab);
@@ -148,7 +150,8 @@ export function NavigationBar({ onOpenAuthModal }) {
             >
               <Link href="/cart">
                 <ShoppingCart className="size-4" />
-                <span className="sr-only">Shopping Cart</span>
+                {count}
+                <span className="sr-only">Shopping Cart </span>
               </Link>
             </Button>
             {user ? (

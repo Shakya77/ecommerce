@@ -37,4 +37,9 @@ export class CartController {
   async remove(@Param('id') id: string) {
     return await this.cartService.remove(+id);
   }
+
+  @Get('/count')
+  async cartCount(@Request() req) {
+    return await this.cartService.cartCount(req.user);
+  }
 }

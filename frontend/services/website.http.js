@@ -42,7 +42,7 @@ export const onRemoveFromWishlist = async (productId) => {
 export const onAddToCart = async (productId, quantity = 1) => {
   try {
     const data = await api.post(`/cart`, { productId, quantity });
-
+    
     return data;
   } catch (error) {
     console.error("Error adding product to cart:", error);
