@@ -2,12 +2,23 @@
 
 import CartLayout from "@/components/website/cart/CartLayout";
 import { fetcher } from "@/constants";
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 import useSWR from "swr";
 
 export default function Page() {
   const query = `/cart`;
 
   const { data, isLoading, error, mutate } = useSWR(query, fetcher);
+
+  const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (!isAuthenticated) {
+    }
+  }, [isAuthenticated, loading]);
 
   return (
     <>
