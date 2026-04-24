@@ -13,7 +13,7 @@ function Spinner({ className, ...props }) {
   );
 }
 
-export function LodingSpinner({ className, ...props }) {
+export function LoadingSpinner({ className, ...props }) {
   return (
     <div
       className={cn(

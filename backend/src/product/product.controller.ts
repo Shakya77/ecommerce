@@ -44,11 +44,11 @@ export class ProductController {
     @UploadedFiles() files: Express.Multer.File[],
     @Request() req,
   ) {
-    return {
-      dto: createProductDto,
-      user: req.user,
-      file: files || [],
-    };
+    // return {
+    //   dto: createProductDto,
+    //   user: req.user,
+    //   file: files || [],
+    // };
     return await this.productService.create(
       createProductDto,
       req.user,

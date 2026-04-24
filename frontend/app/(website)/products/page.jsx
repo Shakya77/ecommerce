@@ -16,8 +16,8 @@ import {
 import { ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { LodingSpinner } from "@/components/loading-spinner";
 import useSWR from "swr";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
 export default function Page() {
   const [search, setSearch] = useState("");
@@ -157,7 +157,7 @@ export default function Page() {
 
           {loadingMore && (
             <div className="col-span-full flex justify-center py-6">
-              <LodingSpinner />
+              <LoadingSpinner />
             </div>
           )}
 

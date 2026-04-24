@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "@/constants";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useCallback, useEffect, useState } from "react";
-import { LodingSpinner } from "../loading-spinner";
+import { LoadingSpinner } from "../loading-spinner";
 
 export default function HomeProduct() {
   const [page, setPage] = useState(1);
@@ -17,7 +17,6 @@ export default function HomeProduct() {
   const query = `/products?search&limit=10&page=${page}`;
   const { data } = useSWR(query, fetcher);
 
-  // append new data when page changes
   useEffect(() => {
     if (!data) return;
 
@@ -68,7 +67,7 @@ export default function HomeProduct() {
         ))}
       </div>
 
-      {loadingMore && <LodingSpinner />}
+      {loadingMore && <LoadingSpinner />}
 
       {/* 👇 Infinite scroll trigger */}
       <div ref={infiniteRef} className="h-10" />
