@@ -50,6 +50,10 @@ const data = {
           title: "Carousel",
           url: "/admin/dashboard/carousel",
         },
+        {
+          title: "Promo",
+          url: "/admin/dashboard/promo",
+        },
       ],
     },
     {

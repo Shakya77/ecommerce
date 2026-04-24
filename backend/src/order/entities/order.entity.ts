@@ -12,6 +12,7 @@ import {
 import { User } from 'src/users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
 import { Address } from 'src/address/entities/address.entity';
+import { Promo, PromoType } from 'src/promo/entities/promo.entity';
 
 const enum OrderStatus {
   PENDING = 'PENDING',
@@ -65,6 +66,34 @@ export class Order extends Model<Order> {
 
   @BelongsTo(() => Address)
   getAddress: Address;
+
+  @ForeignKey(() => Promo)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  promoId: number;
+
+  @BelongsTo(() => Promo)
+  getPromo: Promo;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  subTotal: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: true,
+  })
+  discount: number;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(PromoType)),
+    allowNull: true,
+  })
+  discountType: number;
 
   @Column({
     type: DataType.INTEGER,

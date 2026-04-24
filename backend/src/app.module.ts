@@ -13,6 +13,7 @@ import { UploadModule } from './upload/upload.module';
 import { CarouselModule } from './carousel/carousel.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { AddressModule } from './address/address.module';
+import { PromoModule } from './promo/promo.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AddressModule } from './address/address.module';
     CarouselModule,
     WishlistModule,
     AddressModule,
+    PromoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

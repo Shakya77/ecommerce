@@ -10,6 +10,7 @@ import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { OrderItem } from 'src/order/entities/order-item.entity';
 import { Address } from 'src/address/entities/address.entity';
+import { Promo } from 'src/promo/entities/promo.entity';
 
 export const databaseProviders = [
   {
@@ -36,6 +37,7 @@ export const databaseProviders = [
         Order,
         OrderItem,
         Address,
+        Promo,
       ]);
 
       await sequelize.sync();
