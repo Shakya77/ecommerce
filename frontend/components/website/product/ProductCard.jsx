@@ -34,16 +34,14 @@ export default function ProductCard({ id, image, slug, title, price }) {
     setIsAddingToCart(true);
 
     try {
-      const response = await onAddToCart(id, 1);
-
-      if (!response) {
-        return;
-      }
+      const { data } = await onAddToCart(id, 1);
 
       await refreshCount();
 
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 2000);
+    } catch (error) {
+      toast.error("Admin cant add to cart");
     } finally {
       setIsAddingToCart(false);
     }

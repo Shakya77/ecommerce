@@ -23,6 +23,12 @@ export default function Invoice({ data }) {
               Invoice No: <span className="font-semibold">{data.id}</span>
             </p>
           </div>
+          <div className="text-right">
+            <p className="text-sm">Shipping Address:</p>
+            <p className="text-sm font-semibold">{data.getAddress.address}</p>
+            <p className="text-sm font-semibold">{data.getAddress.city}</p>
+            <p className="text-sm font-semibold">{data.getAddress.state}</p>
+          </div>
         </div>
 
         <div className="mb-10">

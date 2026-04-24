@@ -13,12 +13,17 @@ import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/users/entities/user.entity';
+import { AllowedRoles } from 'src/auth/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @AllowedRoles(Roles.CUSTOMER)
+  @UseGuards(RolesGuard)
   @Post()
   async create(@Body() createCartDto: CreateCartDto, @Request() req) {
     return this.cartService.create(createCartDto, req.user);

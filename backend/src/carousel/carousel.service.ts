@@ -3,6 +3,8 @@ import { CreateCarouselDto } from './dto/create-carousel.dto';
 import { UpdateCarouselDto } from './dto/update-carousel.dto';
 import { Carousel } from './entities/carousel.entity';
 import { CAROUSEL_REPOSITORY } from '../../constants';
+import path from 'path';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class CarouselService {
@@ -66,6 +68,28 @@ export class CarouselService {
   }
 
   async remove(id: number) {
-    return await this.carouselRepository.destroy({ where: { id } });
+    const carousel = await this.findOne(id);
+
+    if (!carousel) {
+      throw new Error(`Carousel with id ${id} not found`);
+    }
+
+    await this.carouselRepository.destroy({
+      where: { id },
+    });
+
+    try {
+      const relativePath = carousel.imageUrl.replace(/^\/+/, '');
+      const filePath = path.join(process.cwd(), relativePath);
+
+      await fs.unlink(filePath);
+    } catch (err) {
+      console.error(
+        `Failed to delete file ${carousel.imageUrl}:`,
+        err instanceof Error ? err.message : String(err),
+      );
+    }
+
+    return { message: 'Carousel deleted successfully' };
   }
 }

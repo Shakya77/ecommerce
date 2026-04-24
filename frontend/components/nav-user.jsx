@@ -28,7 +28,7 @@ export function NavUser() {
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.push("/");
   };
 
   function shorten(str = "") {

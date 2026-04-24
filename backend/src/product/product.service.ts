@@ -17,6 +17,8 @@ import { ProductHasCategory } from './entities/product-has-category.entity';
 import { ProductHasMedia } from './entities/product-has-media.entity';
 import { Product } from './entities/product.entity';
 import { OrderItem } from 'src/order/entities/order-item.entity';
+import path from 'path';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class ProductService {
@@ -359,6 +361,11 @@ export class ProductService {
     await this.findOne(id);
 
     await this.sequelize.transaction(async (transaction) => {
+      const medias = await this.productMediaRepository.findAll({
+        where: { productId: id },
+        transaction,
+      });
+
       await this.productCategoryRepository.destroy({
         where: { productId: id },
         force: true,
@@ -375,6 +382,18 @@ export class ProductService {
         where: { id },
         transaction,
       });
+
+      await Promise.all(
+        medias.map(async (media) => {
+          try {
+            const relativePath = media.path.replace(/^\/+/, '');
+            const filePath = path.join(process.cwd(), relativePath);
+            await fs.unlink(filePath);
+          } catch (err) {
+            console.error(`Failed to delete file ${media.path}:`, err);
+          }
+        }),
+      );
     });
 
     return { message: 'Product removed successfully' };
