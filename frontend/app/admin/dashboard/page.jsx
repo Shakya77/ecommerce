@@ -16,10 +16,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { toWords } from "to-words";
+import Loader from "@/components/Loader";
 
 export default function Page() {
   const [totalRevenue, setTotalRevenue] = useState(null);
   const [customerCount, setCustomerCount] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const { data, isLoading } = useSWR("/product/report/sold", fetcher);
 
@@ -33,15 +35,15 @@ export default function Page() {
     setCustomerCount(data.count);
   };
 
-  const getTotalRevenueText = () => {
-    if (!totalRevenue) return "";
-    return toWords(totalRevenue);
-  };
-
   useEffect(() => {
-    getTotalRevenue();
-    getCustomerCount();
+    Promise.all([getTotalRevenue(), getCustomerCount()]).then(() => {
+      setLoading(false);
+    });
+
+    setLoading(false);
   }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <div className=" space-y-6">
@@ -65,9 +67,9 @@ export default function Page() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Rs. {totalRevenue ?? 0}</div>
+            <div className="text-2xl font-bold">Rs. {totalRevenue}</div>
             <div className="text-sm text-muted-foreground">
-              {getTotalRevenueText()}
+              {toWords(totalRevenue, { currency: true })}
             </div>
           </CardContent>
         </Card>

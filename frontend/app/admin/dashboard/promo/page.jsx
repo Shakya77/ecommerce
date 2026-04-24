@@ -38,12 +38,15 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Badge } from "@/components/ui/badge";
 
 export default function Page() {
   const [mode, setMode] = useState("add");
   const [open, setOpen] = useState(false);
   const [id, setId] = useState(null);
   const [selectedType, setSelectedType] = useState("amount");
+  const [openStatus, setOpenStatus] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const {
     register,
@@ -144,6 +147,21 @@ export default function Page() {
     }
   };
 
+  const onStatus = async (id) => {
+    try {
+      const response = await api.patch(`/promo/status/${id}`);
+      toast.success(response.data.message);
+      mutate();
+    } catch (error) {
+      console.error("Error changing promo status:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to change promo status",
+      );
+    } finally {
+      setSelectedRow(null);
+    }
+  };
+
   const columns = [
     {
       header: "SN",
@@ -176,6 +194,24 @@ export default function Page() {
             ? `Rs ${row.original.value}`
             : `${row.original.value}%`}
         </span>
+      ),
+    },
+    {
+      accessorKey: "isActive",
+      header: "Status",
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setSelectedRow(row.original);
+            setOpenStatus(true);
+          }}
+          className="cursor-pointer"
+        >
+          <Badge variant={row.original.isActive ? "default" : "secondary"}>
+            {row.original.isActive ? "Active" : "Inactive"}
+          </Badge>
+        </Button>
       ),
     },
     {
@@ -302,6 +338,38 @@ export default function Page() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openStatus} onOpenChange={setOpenStatus}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Status</DialogTitle>
+          </DialogHeader>
+
+          <p>
+            Are you sure you want to mark this user as{" "}
+            <b>{selectedRow?.isActive ? "Inactive" : "Active"}</b>?
+          </p>
+
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setOpenStatus(false)}>
+              Cancel
+            </Button>
+
+            <Button
+              onClick={async () => {
+                try {
+                  await onStatus(selectedRow.id);
+                  setOpenStatus(false);
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+            >
+              Confirm
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       <DataTable columns={columns} data={data} isLoading={isLoading} />

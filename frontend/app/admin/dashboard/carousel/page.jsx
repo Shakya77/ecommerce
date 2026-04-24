@@ -17,7 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 export default function page() {
   const query = `/carousel`;
@@ -52,7 +52,7 @@ export default function page() {
         <img
           src={toImageUrl(row.original.imageUrl)}
           alt={row.original.label}
-          className="h-12 w-12 rounded-full object-cover"
+          className="h-12 w-12  object-cover"
         />
       ),
     },

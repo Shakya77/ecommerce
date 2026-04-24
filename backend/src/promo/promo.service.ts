@@ -46,7 +46,6 @@ export class PromoService {
       throw new BadRequestException('Promo not found');
     }
 
-    // Check if code is being updated and if it's unique
     if (updatePromoDto.code && updatePromoDto.code !== promo.code) {
       const existingPromo = await this.promoRepository.findOne({
         where: { code: updatePromoDto.code },
@@ -87,5 +86,24 @@ export class PromoService {
     }
 
     return promo;
+  }
+
+  async onStatus(id: number) {
+    const promo = await this.findOne(id);
+
+    if (!promo) {
+      throw new BadRequestException('Promo not found');
+    }
+
+    const newStatus = !promo.isActive;
+
+    await this.promoRepository.update(
+      { isActive: newStatus },
+      { where: { id } },
+    );
+
+    return {
+      message: `${promo.title} Promo is ${newStatus ? '' : 'not'} active`,
+    };
   }
 }

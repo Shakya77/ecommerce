@@ -4,6 +4,7 @@ import {
   CATEGORIES_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCTS_REPOSITORY,
+  PROMO_REPOSITORY,
 } from '../constants';
 import { Category } from './category/entities/category.entity';
 import { Product } from './product/entities/product.entity';
@@ -13,6 +14,7 @@ import { Order } from './order/entities/order.entity';
 import { OrderItem } from './order/entities/order-item.entity';
 import { Carousel } from './carousel/entities/carousel.entity';
 import { Op } from 'sequelize';
+import { Promo } from './promo/entities/promo.entity';
 @Injectable()
 export class AppService {
   constructor(
@@ -27,6 +29,9 @@ export class AppService {
 
     @Inject(CAROUSEL_REPOSITORY)
     private readonly carouselRepository: typeof Carousel,
+
+    @Inject(PROMO_REPOSITORY)
+    private readonly promoRepository: typeof Promo,
   ) {}
 
   getHello(): string {
@@ -177,6 +182,13 @@ export class AppService {
           ],
         },
       ],
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  async getPromoCodes() {
+    return await this.promoRepository.findAll({
+      where: { isActive: true },
       order: [['createdAt', 'DESC']],
     });
   }

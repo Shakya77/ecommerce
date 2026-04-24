@@ -53,4 +53,10 @@ export class AppController {
   async getOrders(@Request() req) {
     return await this.appService.getOrders(req.user);
   }
+
+  @Public()
+  @Get('promo/codes')
+  async getPromoCodes() {
+    return await this.appService.getPromoCodes();
+  }
 }
