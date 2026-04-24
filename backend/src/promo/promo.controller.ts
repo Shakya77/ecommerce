@@ -37,6 +37,13 @@ export class PromoController {
 
   @AllowedRoles(Roles.ADMIN)
   @UseGuards(RolesGuard)
+  @Get('usage')
+  async promoUsage() {
+    return await this.promoService.promoUsage();
+  }
+
+  @AllowedRoles(Roles.ADMIN)
+  @UseGuards(RolesGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.promoService.findOne(+id);

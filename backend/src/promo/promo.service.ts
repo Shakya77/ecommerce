@@ -3,6 +3,8 @@ import { CreatePromoDto } from './dto/create-promo.dto';
 import { UpdatePromoDto } from './dto/update-promo.dto';
 import { Promo } from './entities/promo.entity';
 import { PROMO_REPOSITORY } from '../../constants';
+import { col, fn } from 'sequelize/lib/sequelize';
+import { Order } from 'src/order/entities/order.entity';
 
 @Injectable()
 export class PromoService {
@@ -105,5 +107,24 @@ export class PromoService {
     return {
       message: `${promo.title} Promo is ${newStatus ? '' : 'not'} active`,
     };
+  }
+
+  async promoUsage() {
+    return await this.promoRepository.findAll({
+      attributes: [
+        'id',
+        'code',
+        [fn('COUNT', col('getOrders.id')), 'usageCount'],
+      ],
+      include: [
+        {
+          model: Order,
+          as: 'getOrders',
+          attributes: [],
+        },
+      ],
+      group: ['Promo.id'],
+      order: [[fn('COUNT', col('getOrders.id')), 'DESC']],
+    });
   }
 }

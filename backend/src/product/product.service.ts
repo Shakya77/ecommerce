@@ -423,6 +423,7 @@ export class ProductService {
         },
       ],
       group: ['Product.id', 'Product.name'],
+      order: [[fn('SUM', col('orderItems.quantity')), 'DESC']],
       limit: 10,
       subQuery: false,
     });

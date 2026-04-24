@@ -1,6 +1,7 @@
 import HomeCarousel from "@/components/website/HomeCarousel";
 import HomeCategory from "@/components/website/HomeCategory";
 import HomeProduct from "@/components/website/HomrProduct";
+import PromoCodes from "@/components/website/PromoCodes";
 
 export async function generateMetadata({ params }) {
   return {
@@ -12,6 +13,7 @@ export async function generateMetadata({ params }) {
 export default function main() {
   return (
     <main className="flex flex-col gap-6">
+      <PromoCodes />
       <HomeCarousel />
       <HomeCategory />
       <HomeProduct />

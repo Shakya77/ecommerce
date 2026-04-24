@@ -1,14 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetcher } from "@/constants";
 import api from "@/lib/api";
@@ -17,10 +10,13 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { toWords } from "to-words";
 import Loader from "@/components/Loader";
+import TopProducts from "@/components/admin/dashboard/TopProducts";
+import PromoUsage from "@/components/admin/dashboard/PromoUsage";
 
 export default function Page() {
   const [totalRevenue, setTotalRevenue] = useState(null);
   const [customerCount, setCustomerCount] = useState(null);
+  const [promoUsage, setPromoUsage] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { data, isLoading } = useSWR("/product/report/sold", fetcher);
@@ -35,13 +31,26 @@ export default function Page() {
     setCustomerCount(data.count);
   };
 
-  useEffect(() => {
-    Promise.all([getTotalRevenue(), getCustomerCount()]).then(() => {
-      setLoading(false);
-    });
+  const getPromoUsage = async () => {
+    const { data } = await api.get("/promo/usage");
+    setPromoUsage(data);
+  };
 
-    setLoading(false);
-  }, []);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          getTotalRevenue(),
+          getCustomerCount(),
+          getPromoUsage(),
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []); 
 
   if (loading) return <Loader />;
 
@@ -69,7 +78,9 @@ export default function Page() {
           <CardContent>
             <div className="text-2xl font-bold">Rs. {totalRevenue}</div>
             <div className="text-sm text-muted-foreground">
-              {toWords(totalRevenue, { currency: true })}
+              {totalRevenue != null
+                ? toWords(Number(totalRevenue), { currency: true })
+                : "--"}
             </div>
           </CardContent>
         </Card>
@@ -90,41 +101,8 @@ export default function Page() {
       </div>
 
       {/* Table Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Selling Products</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Sn</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead className="text-right">Total Sold</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : (
-                data?.map((item, index) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.name.slice(0, 60)}</TableCell>
-                    <TableCell className="text-right">
-                      {item.totalSold}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <TopProducts data={data} isLoading={isLoading} />
+      <PromoUsage data={promoUsage} isLoading={isLoading} />
     </div>
   );
 }
