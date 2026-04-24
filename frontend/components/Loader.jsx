@@ -9,7 +9,7 @@ export default function Loader({
 }) {
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-[8px]">
+      <div className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center backdrop-blur-sm">
         <Atom color={color} size={size} text="" textColor="" />
       </div>
     );

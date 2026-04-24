@@ -31,7 +31,17 @@ export default function Page() {
   const getKey = (pageIndex, previousPageData) => {
     if (previousPageData && !previousPageData.hasMore) return null;
 
-    return `/products?search=${search}&limit=8&page=${pageIndex + 1}&categories=${checked.join(",")}`;
+    const params = new URLSearchParams({
+      search,
+      limit: "8",
+      page: (pageIndex + 1).toString(),
+    });
+
+    if (checked.length > 0) {
+      params.append("categories", checked.join(","));
+    }
+
+    return `/products?${params.toString()}`;
   };
 
   const { data, size, setSize, mutate } = useSWRInfinite(getKey, fetcher);
@@ -152,7 +162,7 @@ export default function Page() {
           )}
 
           {items.length === 0 && !loadingMore && (
-            <div className="col-span-full flex flex-col items-center justify-center py-10">
+            <div className="col-span-full flex flex-col items-center justify-center py-10 h-fit">
               <p className="text-lg font-medium text-gray-700 text-center">
                 {search && checked.length > 0
                   ? `No results for "${search}" in selected categories`

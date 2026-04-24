@@ -52,6 +52,7 @@ export class AppService {
       .split(',')
       .map((id) => Number(id.trim()))
       .filter((id) => Number.isInteger(id) && id > 0);
+    console.log(categoryIds);
     const hasCategoryFilter = categoryIds.length > 0;
 
     const { rows, count } = await this.productsRepository.findAndCountAll({

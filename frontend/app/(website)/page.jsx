@@ -3,7 +3,7 @@ import HomeCategory from "@/components/website/HomeCategory";
 import HomeProduct from "@/components/website/HomrProduct";
 import PromoCodes from "@/components/website/PromoCodes";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata() {
   return {
     title: "Home | E-commerce",
     description: "Browse our collection of products",

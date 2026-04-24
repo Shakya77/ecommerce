@@ -186,7 +186,7 @@ export default function ProductDetail({ slug }) {
               <AddToCartButton
                 onClick={handleAddToCart}
                 isLoading={isAddingToCart}
-                className="flex h-12 flex-1 items-center justify-center gap-2 bg-black text-white"
+                className="flex h-12 flex-1 items-center justify-center gap-2 bg-black text-white rounded-sm"
                 iconClassName="mr-2 h-5 w-5"
                 iconSize={20}
                 addedText="Added"
