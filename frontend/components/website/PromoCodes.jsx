@@ -16,7 +16,7 @@ export default function PromoCodes() {
 
   return (
     <Marquee speed={100} pauseOnHover gradient={false}>
-      🎉 PROMO CODES TO GET DISCOUNTS:{" "}
+      USE PROMO CODES TO GET DISCOUNTS:{" "}
       {data?.map((promo) => promo.code).join(" , ")}
     </Marquee>
   );
