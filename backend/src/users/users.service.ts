@@ -183,7 +183,7 @@ export class UsersService {
   async getProfile(id: number) {
     const user = await this.usersRepository.findOne({
       where: { id, role: Roles.CUSTOMER },
-      attributes: ['id', 'name', 'email', 'role', 'isActive', 'number', 'dob'],
+      attributes: ['id', 'name', 'email', 'role', 'isActive', 'number', 'dob', 'gender'],
     });
 
     if (!user) {

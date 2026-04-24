@@ -2,32 +2,23 @@
 
 import Invoice from "@/components/invoice";
 import Loader from "@/components/Loader";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Separator } from "@/components/ui/separator";
 import api from "@/lib/api";
-import formatDate from "@/lib/date";
+import { formatCurrency } from "@/lib/currency";
 import { toImageUrl } from "@/lib/image";
 import { getUserAddress, getUserOrderById } from "@/services/website.http";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-const statusVariant = {
-  PENDING: "outline",
-  COMPLETED: "secondary",
-  CANCELLED: "destructive",
-};
 
 export default function page() {
   const params = useParams();
@@ -39,12 +30,15 @@ export default function page() {
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirmingOrder, setIsConfirmingOrder] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoDetails, setPromoDetails] = useState(null);
+  const [discount, setDiscount] = useState(0);
 
   const orderItems = useMemo(() => {
     return Array.isArray(order?.orderItems) ? order.orderItems : [];
   }, [order]);
 
-  const grandTotal = useMemo(() => {
+  const subTotal = useMemo(() => {
     return orderItems.reduce((sum, item) => {
       const quantity = Number(item?.quantity || 0);
       const price = Number(item?.price || 0);
@@ -52,30 +46,31 @@ export default function page() {
     }, 0);
   }, [orderItems]);
 
+  const grandTotal = useMemo(() => {
+    if (!promoDetails) {
+      return subTotal;
+    }
+
+    return subTotal - promoDetails.value;
+  }, [promoDetails, subTotal]);
+
+  const calculateDiscount = (promoDetails) => {
+    const type = promoDetails.promoType;
+    const value = promoDetails.value;
+
+    if (type === "amount") {
+      return value;
+    }
+
+    return (subTotal * value) / 100;
+  };
+
   const totalItems = useMemo(() => {
     return orderItems.reduce(
       (sum, item) => sum + Number(item?.quantity || 0),
       0,
     );
   }, [orderItems]);
-
-  const formatCurrency = (amount) =>
-    `Rs. ${Number(amount || 0).toLocaleString()}`;
-
-  const selectedAddress = useMemo(() => {
-    return (
-      addresses.find((address) => address.id === selectedAddressId) || null
-    );
-  }, [addresses, selectedAddressId]);
-
-  const orderAddress = useMemo(() => {
-    const orderAddressId = Number(order?.addressId || 0);
-    return (
-      addresses.find((address) => address.id === orderAddressId) ||
-      selectedAddress ||
-      null
-    );
-  }, [addresses, order?.addressId, selectedAddress]);
 
   const isPending = String(order?.status || "").toUpperCase() === "PENDING";
 
@@ -132,19 +127,43 @@ export default function page() {
 
       const payload = {
         addressId: selectedAddressId,
-        status: "COMPLETED",
+        promoId: promoDetails?.id ?? null,
+        subTotal,
+        discount,
+        totalAmount: grandTotal,
       };
 
       const { data } = await api.patch(`/order/${order.id}`, payload);
 
       toast.success(data?.message || "Order confirmed successfully");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
     } catch (error) {
       console.error("Failed to confirm order:", error);
       toast.error(error?.response?.data?.message || "Failed to confirm order");
     } finally {
       setIsConfirmingOrder(false);
     }
-    router.refresh();
+  };
+
+  const handleApplyPromo = async () => {
+    if (!promoCode) {
+      toast.error("Please enter a promo code");
+      return;
+    }
+
+    try {
+      const { data } = await api.get("/promo/getByCode/" + promoCode);
+      setPromoDetails(data);
+      const discountAmount = calculateDiscount(data);
+      setDiscount(discountAmount);
+      toast.success(data.message || "Promo applied successfully");
+    } catch (error) {
+      console.error("Failed to apply coupon:", error);
+      toast.error(error?.response?.data?.message || "Failed to apply coupon");
+    }
   };
 
   if (isLoading) {
@@ -296,14 +315,45 @@ export default function page() {
                     <span className="text-muted-foreground">
                       Items Total ({totalItems} items)
                     </span>
-                    <span>{formatCurrency(grandTotal)}</span>
+                    <span>{formatCurrency(subTotal)}</span>
                   </div>
                 </div>
 
                 <Separator />
 
                 <div className="flex items-center justify-between text-lg font-semibold">
-                  <span>Total</span>
+                  <InputGroup>
+                    <InputGroupInput
+                      placeholder="Enter the Promo Code"
+                      onInput={(event) => {
+                        setPromoCode(event.target.value);
+                      }}
+                    />
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton
+                        className="px-4 py-4"
+                        onClick={() => handleApplyPromo()}
+                      >
+                        Apply
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between ">
+                  <span>Sub Total</span>
+                  <span>{formatCurrency(subTotal)}</span>
+                </div>
+
+                <div className="flex items-center justify-between ">
+                  <span>Discount</span>
+                  <span>{formatCurrency(discount)}</span>
+                </div>
+
+                <div className="flex items-center justify-between ">
+                  <span>Grand Total</span>
                   <span>{formatCurrency(grandTotal)}</span>
                 </div>
 

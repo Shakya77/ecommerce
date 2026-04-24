@@ -12,6 +12,7 @@ import {
   ORDER_ITEM_REPOSITORY,
   PRODUCTS_REPOSITORY,
   CARTS_REPOSITORY,
+  PROMO_REPOSITORY,
 } from '../../constants';
 import { OrderItem } from './entities/order-item.entity';
 import { Product } from 'src/product/entities/product.entity';
@@ -22,6 +23,7 @@ import { Category } from 'src/category/entities/category.entity';
 import { Roles, User } from 'src/users/entities/user.entity';
 import { col, fn, Op } from 'sequelize';
 import { Address } from 'src/address/entities/address.entity';
+import { Promo } from 'src/promo/entities/promo.entity';
 
 @Injectable()
 export class OrderService {
@@ -34,6 +36,8 @@ export class OrderService {
     private readonly productsRepository: typeof Product,
     @Inject(CARTS_REPOSITORY)
     private readonly cartRepository: typeof Cart,
+    @Inject(PROMO_REPOSITORY)
+    private readonly promoRepository: typeof Promo,
   ) {}
 
   async create(createOrderDto: CreateOrderDto, user: { id: number }) {
@@ -247,35 +251,53 @@ export class OrderService {
       throw new NotFoundException('Order not found');
     }
 
-    const payload = { ...updateOrderDto } as any;
-    const requestedStatus = String(payload?.status || '').toUpperCase();
+    const promoId = updateOrderDto.promoId;
 
-    if (requestedStatus === 'COMPLETED') {
-      const orderItems = Array.isArray(order.orderItems)
-        ? order.orderItems
-        : [];
+    let discount = 0;
+    let discountType = '';
 
-      if (orderItems.length === 0) {
-        throw new BadRequestException('Order has no items to confirm');
+    const orderItems = Array.isArray(order.orderItems) ? order.orderItems : [];
+
+    const subTotal = orderItems.reduce((sum, item) => {
+      const quantity = Number(item?.quantity || 0);
+      const price = Number(item?.price || 0);
+      return sum + quantity * price;
+    }, 0);
+
+    if (promoId) {
+      const promo = await this.promoRepository.findOne({
+        where: { id: promoId },
+        attributes: ['id', 'title', 'promoType', 'code', 'value'],
+      });
+
+      if (!promo) {
+        throw new BadRequestException('Promo not found');
       }
 
-      payload.totalAmount = orderItems.reduce((sum, item) => {
-        const quantity = Number(item?.quantity || 0);
-        const price = Number(item?.price || 0);
-        return sum + quantity * price;
-      }, 0);
+      discountType = promo.promoType;
+      if (discountType === 'amount') {
+        discount = promo.value;
+      } else {
+        discount = (subTotal * promo.value) / 100;
+      }
     }
 
-    const [updatedCount] = await this.orderRepository.update(payload as Order, {
-      where: {
-        id,
-        userId: user.id,
+    const totalAmount = Math.max(subTotal - discount, 0);
+
+    const [updatedCount] = await this.orderRepository.update(
+      {
+        ...updateOrderDto,
+        status: 'COMPLETED',
+        totalAmount,
+        discountType,
+      } as any as Order,
+      {
+        where: {
+          id,
+          userId: user.id,
+        },
       },
-    });
-
-    if (!updatedCount) {
-      throw new NotFoundException('Order not found');
-    }
+    );
 
     return { message: 'Order Placed successfully', orderId: order.id };
   }

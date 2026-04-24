@@ -14,7 +14,7 @@ import { OrderItem } from './order-item.entity';
 import { Address } from 'src/address/entities/address.entity';
 import { Promo, PromoType } from 'src/promo/entities/promo.entity';
 
-const enum OrderStatus {
+export enum OrderStatus {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
@@ -43,10 +43,11 @@ export class Order extends Model<Order> {
   getUser: User;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM(...Object.values(OrderStatus)),
     allowNull: false,
+    defaultValue: OrderStatus.PENDING,
   })
-  status: string;
+  status: OrderStatus;
 
   @Column({
     type: DataType.BOOLEAN,
@@ -84,7 +85,7 @@ export class Order extends Model<Order> {
   subTotal: number;
 
   @Column({
-    type: DataType.FLOAT,
+    type: DataType.DECIMAL(10, 2),
     allowNull: true,
   })
   discount: number;
@@ -93,10 +94,10 @@ export class Order extends Model<Order> {
     type: DataType.ENUM(...Object.values(PromoType)),
     allowNull: true,
   })
-  discountType: number;
+  discountType: PromoType;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.DECIMAL(10, 2),
     allowNull: true,
   })
   totalAmount: number;

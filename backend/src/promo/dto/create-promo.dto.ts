@@ -12,7 +12,7 @@ export class CreatePromoDto {
 
   @IsEnum(PromoTypeDto)
   @IsNotEmpty()
-  type: PromoTypeDto;
+  promoType: PromoTypeDto;
 
   @IsString()
   @IsNotEmpty()

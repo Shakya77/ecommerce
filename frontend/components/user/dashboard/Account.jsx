@@ -73,6 +73,12 @@ function ViewMode({ profile, setMode }) {
           </dt>
           <dd className="text-sm">{formatDate(profile.dob)}</dd>
         </div>
+        <div className="flex flex-col gap-1">
+          <dt className="text-sm font-medium text-muted-foreground">
+            Gender
+          </dt>
+          <dd className="text-sm capitalize">{profile.gender || "Not specified"}</dd>
+        </div>
       </dl>
       <Separator />
       <div className="flex gap-2">
@@ -202,6 +208,21 @@ function EditMode({ profile, mutate, setMode }) {
               />
             </PopoverContent>
           </Popover>
+        </div>
+
+        {/* Gender */}
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium">Gender</label>
+          <select
+            value={formData.gender || ""}
+            onChange={(e) => updateField("gender", e.target.value)}
+            className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
       </div>
 

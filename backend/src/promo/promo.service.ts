@@ -75,4 +75,17 @@ export class PromoService {
 
     return { message: 'Promo deleted successfully' };
   }
+
+  async getByCode(code: string) {
+    const promo = await this.promoRepository.findOne({
+      where: { isActive: true, code },
+      attributes: ['id', 'title', 'promoType', 'code', 'value'],
+    });
+
+    if (!promo) {
+      throw new BadRequestException('Promo not found');
+    }
+
+    return promo;
+  }
 }

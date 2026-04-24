@@ -54,7 +54,7 @@ export default function Page() {
   } = useForm({
     defaultValues: {
       title: "",
-      type: "amount",
+      promoType: "amount",
       code: "",
       value: 0,
     },
@@ -72,7 +72,7 @@ export default function Page() {
       setSelectedType("amount");
       reset({
         title: "",
-        type: "amount",
+        promoType: "amount",
         code: "",
         value: 0,
       });
@@ -94,7 +94,7 @@ export default function Page() {
   const onSubmit = async (data) => {
     const payload = {
       title: data.title,
-      type: selectedType,
+      promoType: selectedType,
       code: data.code,
       value: parseInt(data.value),
     };
@@ -111,7 +111,7 @@ export default function Page() {
 
       reset({
         title: "",
-        type: "amount",
+        promoType: "amount",
         code: "",
         value: 0,
       });
@@ -136,7 +136,7 @@ export default function Page() {
       setValue("title", response.data.title);
       setValue("code", response.data.code);
       setValue("value", response.data.value);
-      setSelectedType(response.data.type);
+      setSelectedType(response.data.promoType);
       setOpen(true);
     } catch (error) {
       console.error("Error editing promo:", error);
@@ -156,16 +156,14 @@ export default function Page() {
     {
       accessorKey: "code",
       header: "Code",
-      cell: ({ row }) => (
-        <span className="font-mono font-semibold">{row.original.code}</span>
-      ),
+      cell: ({ row }) => <span className="">{row.original.code}</span>,
     },
     {
-      accessorKey: "type",
+      accessorKey: "promoType",
       header: "Type",
       cell: ({ row }) => (
         <span className="capitalize">
-          {row.original.type === "amount" ? "Fixed Amount" : "Percentage"}
+          {row.original.promoType === "amount" ? "Fixed Amount" : "Percentage"}
         </span>
       ),
     },
@@ -174,8 +172,8 @@ export default function Page() {
       header: "Value",
       cell: ({ row }) => (
         <span>
-          {row.original.type === "amount"
-            ? `$${row.original.value}`
+          {row.original.promoType === "amount"
+            ? `Rs ${row.original.value}`
             : `${row.original.value}%`}
         </span>
       ),
